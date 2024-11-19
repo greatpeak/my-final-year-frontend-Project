@@ -1,8 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import personImage from "../assets/Ellipse 2 (1).svg";
 import chat from "../assets/tdesign_chat-bubble-history-filled.svg";
 import message from "../assets/tabler_message-filled.svg";
 
 export default function GetHealthTips() {
+  const navigate = useNavigate();
+
   const topics = [
     {
       name: "Cancer",
@@ -49,8 +52,19 @@ export default function GetHealthTips() {
       name: "Hepatitis",
       description: "Learn about different types of hepatitis and prevention.",
     },
-    
   ];
+
+  const handleExploreClick = () => {
+    navigate("/loginIn/explore");
+  };
+
+  const handleHealthNewsClick = () => {
+    navigate("/loginIn/health-news");
+  };
+
+  const handleViewSavedChatClick = () => {
+    navigate("/loginIn/health-bot");
+  };
 
   return (
     <div className="h-auto bg-blue-100 p-6 flex flex-col">
@@ -66,8 +80,11 @@ export default function GetHealthTips() {
             johndoe@gmail.com
           </p>
         </div>
-        <button className="bg-[#72BEEE] flex gap-1 text-white text-sm px-4 py-2 rounded-lg md:hidden">
-          <img src={chat} alt="" />
+        <button
+          className="bg-[#72BEEE] flex gap-1 text-white text-sm px-4 py-2 rounded-lg md:hidden"
+          onClick={handleViewSavedChatClick}
+        >
+          <img src={chat} alt="Chat Icon" />
           View saved chat
         </button>
       </div>
@@ -86,14 +103,21 @@ export default function GetHealthTips() {
         </button>
       </div>
 
-      {/* Explore Section */}
+      {/* Explore & Health News Section */}
       <div>
         <div className="flex gap-2 mt-4">
-          {" "}
-          <p className="text-white md:text-lg font-bold mb-4 underline border-r-2 pr-3 border-white">
+          <p
+            className="text-white md:text-lg font-bold mb-4 underline border-r-2 pr-3 border-white cursor-pointer"
+            onClick={handleExploreClick}
+          >
             Explore
           </p>
-          <p className="text-white md:text-lg font-bold mb-4">Health news</p>
+          <p
+            className="text-white md:text-lg font-bold mb-4 cursor-pointer"
+            onClick={handleHealthNewsClick}
+          >
+            Health news
+          </p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

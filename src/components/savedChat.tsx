@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Logo from "../assets/Frame 1.svg";
 import search from "../assets/search.svg";
 import Delete from "../assets/Trash.svg";
@@ -6,6 +6,12 @@ import Time from "../assets/Frame 1000002388.png";
 import person from "../assets/Ellipse 2 (1).svg";
 
 export default function SavedChat() {
+  const navigate = useNavigate(); // useNavigate hook to navigate programmatically
+
+  const handleOpenChat = () => {
+    navigate("/loginIn/health-bot"); // Navigate to the health-bot route
+  };
+
   return (
     <div className="flex w-full h-auto">
       {/* Sidebar */}
@@ -32,7 +38,6 @@ export default function SavedChat() {
             >
               <div className="flex justify-between mb-3">
                 <button>
-                  {" "}
                   <img src={Time} alt="" />
                 </button>
                 <button>
@@ -45,7 +50,10 @@ export default function SavedChat() {
               </p>
               <div className="algin-left flex align-middle mt-2 gap-2 items-center">
                 <img src={person} alt="" />
-                <button className="mt-2 text-white hover:underline text-sm">
+                <button
+                  className="mt-2 text-white hover:underline text-sm"
+                  onClick={handleOpenChat} // Navigate to health-bot when clicked
+                >
                   Open chat
                 </button>
               </div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import personImage from "../assets/Ellipse 2 (1).svg";
 import chatIcon from "../assets/tdesign_chat-bubble-history-filled.svg";
 import sampleImage from "../assets/Scene of construction site with equipment.svg";
@@ -14,6 +15,7 @@ interface NewsItem {
 }
 
 export default function HealthNews() {
+  const navigate = useNavigate();
   const [dropdownVisible, setDropdownVisible] = useState<number | null>(null);
 
   const news: NewsItem[] = [
@@ -48,6 +50,19 @@ export default function HealthNews() {
     setDropdownVisible(dropdownVisible === id ? null : id);
   };
 
+  const handleExploreClick = () => {
+    navigate("/loginIn/explore");
+  };
+
+  const handleHealthNewsClick = () => {
+    navigate("/loginIn/health-news");
+  };
+
+  const handleViewChatClick = () => {
+    // Navigate to the HealthBot page when the button is clicked
+    navigate("/loginIn/health-bot");
+  };
+
   return (
     <div className="min-h-screen bg-blue-100 p-6">
       {/* Header Section */}
@@ -63,6 +78,7 @@ export default function HealthNews() {
           </p>
         </div>
         <button
+          onClick={handleViewChatClick} // Added onClick handler to navigate to HealthBot
           className="bg-[#72BEEE] flex gap-1 text-white text-sm px-4 py-2 rounded-lg md:hidden"
           aria-label="View saved chat"
         >
@@ -74,19 +90,24 @@ export default function HealthNews() {
       {/* Health News Section */}
       <div>
         <div className="flex items-center gap-2 mb-4">
-          <p className="text-white text-lg font-bold  pr-3 border-r-2">
+          <p
+            className="text-white text-lg font-bold pr-3 border-r-2 cursor-pointer"
+            onClick={handleExploreClick}
+          >
             Explore
           </p>
-          <p className="text-white text-lg font-bold underline">Health news</p>
+          <p
+            className="text-white text-lg font-bold underline cursor-pointer"
+            onClick={handleHealthNewsClick}
+          >
+            Health news
+          </p>
         </div>
 
         {/* News List */}
         <div className="space-y-4">
           {news.map((item) => (
-            <div
-              key={item.id}
-              className="bg-[#72BEEE] rounded-2xl p-4"
-            >
+            <div key={item.id} className="bg-[#72BEEE] rounded-2xl p-4">
               {/* Tag and Views */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">

@@ -1,8 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import personImage from "../assets/Ellipse 2 (1).svg";
 import chatIcon from "../assets/tdesign_chat-bubble-history-filled.svg";
 import send from "../assets/Send.svg";
 
 export default function ExplorePage() {
+  const navigate = useNavigate();
+
   const topics = [
     {
       name: "Cancer",
@@ -19,6 +22,14 @@ export default function ExplorePage() {
     },
     // Add more topics as needed
   ];
+
+  const handleExploreClick = () => {
+    navigate("/loginIn/explore");
+  };
+
+  const handleHealthNewsClick = () => {
+    navigate("/loginIn/health-news");
+  };
 
   return (
     <div className="min-h-screen bg-blue-100 p-6 flex flex-col">
@@ -37,6 +48,7 @@ export default function ExplorePage() {
         <button
           className="bg-[#72BEEE] flex gap-1 text-white text-sm px-4 py-2 rounded-lg md:hidden"
           aria-label="View saved chat"
+          onClick={() => navigate("/loginIn/health-bot")} 
         >
           <img src={chatIcon} alt="Chat Icon" className="w-5 h-5" />
           View saved chat
@@ -46,10 +58,18 @@ export default function ExplorePage() {
       {/* Explore Section */}
       <div>
         <div className="flex items-center gap-2 mb-4">
-          <p className="text-white text-lg font-bold underline pr-3 border-r-2 border-white">
+          <p
+            className="text-white text-lg font-bold underline pr-3 border-r-2 border-white cursor-pointer"
+            onClick={handleExploreClick}
+          >
             Explore
           </p>
-          <p className="text-white text-lg font-bold">Health news</p>
+          <p
+            className="text-white text-lg font-bold cursor-pointer"
+            onClick={handleHealthNewsClick}
+          >
+            Health news
+          </p>
         </div>
 
         {/* Topics Grid */}

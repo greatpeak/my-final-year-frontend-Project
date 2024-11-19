@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom"; // Import useNavigate hook
 import personImage from "../assets/Ellipse 2 (1).svg";
 import send from "../assets/Send.svg";
 import robotImage from "../assets/Graident_Ai_Robot_1-removebg-preview 1.svg";
@@ -5,6 +6,12 @@ import arrow from "../assets/Arrow-Left.svg";
 import menu from "../assets/Menu-Alt-2.svg";
 
 export default function HealthBot() {
+  const navigate = useNavigate(); // Initialize navigate function
+
+  const handleGoBack = () => {
+    navigate(-1); // Go back to the previous page
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-blue-100">
       {/* Header Section Big Screen */}
@@ -13,7 +20,7 @@ export default function HealthBot() {
           <img
             src={personImage}
             alt="User Avatar"
-            className="w-10 h-10 rounded-full "
+            className="w-10 h-10 rounded-full"
           />
           <p className="ml-3 text-sm text-white font-semibold hidden md:block">
             johndoe@gmail.com
@@ -23,9 +30,13 @@ export default function HealthBot() {
 
       {/* Header Section Mobile Screen */}
       <div className="w-full bg-white md:hidden justify-between h-[56px] items-center px-2 flex">
-        <button><img src={arrow} alt="" /></button>
+        <button onClick={handleGoBack}>
+          <img src={arrow} alt="Back Arrow" />
+        </button>
         <h3 className="font-medium">Health Bot</h3>
-        <button><img src={menu} alt="" /></button>
+        <button>
+          <img src={menu} alt="Menu" />
+        </button>
       </div>
 
       {/* Chat Messages Section */}
