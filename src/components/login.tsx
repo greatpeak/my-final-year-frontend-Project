@@ -1,6 +1,6 @@
 import Robot from "../assets/Graident_Ai_Robot_1-removebg-preview 1.svg";
 import Logo from "../assets/Frame 2.svg";
-import { Link } from "react-router-dom";
+import { NavLink  } from "react-router-dom";
 
 export default function Login() {
   return (
@@ -8,13 +8,13 @@ export default function Login() {
       <div className="p-6 md:p-12 text-center w-full max-w-md md:max-w-lg">
         {/* Logo and Robot */}
         <div className="space-y-6">
-          <Link to="/">
+          <NavLink to="/">
             <img
               src={Logo}
               alt="Health Bot Logo"
               className="w-[205px] h-[36px] hidden md:block  absolute left-3 top-3"
             />
-          </Link>
+          </NavLink>
 
           <img src={Robot} alt="Robot" className="mx-auto w-28 md:w-40" />
         </div>

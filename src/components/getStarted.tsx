@@ -1,5 +1,6 @@
 import Robot from "../assets/Graident_Ai_Robot_1-removebg-preview 1.svg";
 import Logo from "../assets/Frame 1.svg";
+import { NavLink } from "react-router-dom";
 
 export default function GetStarted() {
   return (
@@ -18,10 +19,10 @@ export default function GetStarted() {
         {/* Buttons */}
         <div className="space-y-4 flex flex-col items-center">
           <button className="bg-[#72BEEE] py-3 px-32 text-white rounded-md font-medium text-base hover:bg-blue-500 transition duration-300">
-            Get Started
+            <NavLink to="/signup">Get Started</NavLink>
           </button>
           <button className="border border-white bg-transparent py-3 px-32 font-medium text-base text-white rounded-md hover:bg-white hover:text-blue-500 transition duration-300">
-            Log in
+            <NavLink to="/login">Log in</NavLink>
           </button>
         </div>
       </div>
