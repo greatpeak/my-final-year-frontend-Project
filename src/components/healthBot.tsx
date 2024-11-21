@@ -28,7 +28,7 @@ export default function HealthBot() {
         </div>
       </div>
 
-      {/* Header Section Mobile Screen */}
+      {/* Header Mobile Screen */}
       <div className="w-full bg-white md:hidden justify-between h-[56px] items-center px-2 flex">
         <button onClick={handleGoBack}>
           <img src={arrow} alt="Back Arrow" />
