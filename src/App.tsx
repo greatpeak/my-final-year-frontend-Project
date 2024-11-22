@@ -1,13 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import GetHealthTips from "./components/getHealthTips";
-import GetStarted from "./components/getStarted";
-import Login from "./components/login";
-import Signup from "./components/signUp";
-import HealthBot from "./components/healthBot";
-import VerifyOtp from "./components/verifyOtp";
-import SavedChat from "./components/savedChat";
-import ExplorePage from "./components/explorePage";
-import HealthNews from "./components/healthNews";
+import GetHealthTips from "./pages/getHealthTips";
+import GetStarted from "./pages/getStarted";
+import Login from "./pages/login";
+import Signup from "./pages/signUp";
+import HealthBot from "./pages/healthBot";
+import VerifyOtp from "./pages/verifyOtp";
+import SavedChat from "./pages/savedChat";
+import ExplorePage from "./pages/explorePage";
+import HealthNews from "./pages/healthNews";
 
 const App = () => {
   return (
