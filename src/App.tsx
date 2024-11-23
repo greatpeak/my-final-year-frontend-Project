@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import GetHealthTips from "./pages/getHealthTips";
 import GetStarted from "./pages/getStarted";
 import Login from "./pages/login";
+import MobileSavedChat from "./pages/mobileSavedChat";
 import Signup from "./pages/signUp";
 import HealthBot from "./pages/healthBot";
 import VerifyOtp from "./pages/verifyOtp";
@@ -24,6 +25,7 @@ const App = () => {
           <Route path="explore" element={<ExplorePage />} />
           <Route path="health-news" element={<HealthNews />} />
           <Route path="health-bot" element={<HealthBot />} />
+          <Route path="mobileSavedChat" element={<MobileSavedChat />} />
         </Route>
       </Routes>
     </Router>

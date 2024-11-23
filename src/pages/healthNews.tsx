@@ -29,7 +29,7 @@ export default function HealthNews() {
     },
     {
       id: 2,
-      tag: "Hot topics🔥",
+      tag: "News",
       time: time,
       title:
         "WHO kickstarts campaign against malnutrition in Asia, Africa, and the Dominican Republic.",
@@ -37,7 +37,7 @@ export default function HealthNews() {
     },
     {
       id: 3,
-      tag: "Hot topics🔥",
+      tag: "News",
       time: time,
       title:
         "Donald Trump fight against rabies in the United States takes a drastic step due to new regulations.",
@@ -60,7 +60,7 @@ export default function HealthNews() {
 
   const handleViewChatClick = () => {
     // Navigate to the HealthBot page when the button is clicked
-    navigate("/loginIn/health-bot");
+    navigate("/loginIn/mobileSavedChat");
   };
 
   return (
@@ -73,7 +73,7 @@ export default function HealthNews() {
             alt="User Avatar"
             className="w-10 h-10 rounded-full"
           />
-          <p className="ml-3 text-sm text-white font-semibold hidden md:block">
+          <p className="ml-3 text-sm  text-white font-semibold hidden md:block">
             johndoe@gmail.com
           </p>
         </div>
@@ -88,7 +88,7 @@ export default function HealthNews() {
       </div>
 
       {/* Health News Section */}
-      <div>
+      <div className=" grid place-content-center">
         <div className="flex items-center gap-2 mb-4">
           <p
             className="text-white text-lg font-bold pr-3 border-r-2 cursor-pointer"
@@ -107,7 +107,7 @@ export default function HealthNews() {
         {/* News List */}
         <div className="space-y-4">
           {news.map((item) => (
-            <div key={item.id} className="bg-[#72BEEE] rounded-2xl p-4">
+            <div key={item.id} className="bg-[#72BEEE] max-w-[646px] rounded-2xl p-4">
               {/* Tag and Views */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">

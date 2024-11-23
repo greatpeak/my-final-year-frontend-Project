@@ -3,7 +3,7 @@ import personImage from "../assets/Ellipse 2 (1).svg";
 import chat from "../assets/tdesign_chat-bubble-history-filled.svg";
 import message from "../assets/tabler_message-filled.svg";
 import circle from "../assets/Ellipse 2.svg";
-import circle2 from "../assets/Ellipse 11.svg"
+import circle2 from "../assets/Ellipse 11.svg";
 
 export default function GetHealthTips() {
   const navigate = useNavigate();
@@ -65,6 +65,10 @@ export default function GetHealthTips() {
   };
 
   const handleViewSavedChatClick = () => {
+    navigate("/loginIn/mobileSavedChat");
+  };
+
+  const handleChatClick = () => {
     navigate("/loginIn/health-bot");
   };
 
@@ -94,15 +98,22 @@ export default function GetHealthTips() {
       {/* Greeting Section */}
       <div className="flex justify-center items-center flex-col flex-grow mt-7">
         <img src={circle} alt="" className="relative h-[256px] w-[256px]" />
-        <img src={circle2} alt="" className="absolute top-12 right-40" />
-        <div className="absolute md:bottom-[260px]">
+        <div className="absolute">
+          <img
+            src={circle2}
+            alt=""
+            className="absolute right-[-30px] md:right-[-50px] top-[-90px] md:top-[-100px] w-[96px] h-[96px]"
+          />
           <p className="text-lg font-normal text-white text-center">
             Hello, User 👋
           </p>
           <p className="text-2xl mt-5 font-semibold text-white text-center">
             Get health tips
           </p>
-          <button className="mt-5 mb-5 text-white text-center flex gap-2 items-center justify-center">
+          <button
+            onClick={handleChatClick}
+            className="mt-5 mb-5 text-white text-center flex gap-2 items-center justify-center"
+          >
             <img src={message} alt="message icon" className="w-6 h-6" />
             Tap to chat
           </button>
