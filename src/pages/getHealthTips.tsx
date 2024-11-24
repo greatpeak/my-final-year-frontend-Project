@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import personImage from "../assets/Ellipse 2 (1).svg";
 import chat from "../assets/tdesign_chat-bubble-history-filled.svg";
 import message from "../assets/tabler_message-filled.svg";
+import circle from "../assets/Ellipse 2.svg";
+import circle2 from "../assets/Ellipse 11.svg";
 
 export default function GetHealthTips() {
   const navigate = useNavigate();
@@ -63,11 +65,15 @@ export default function GetHealthTips() {
   };
 
   const handleViewSavedChatClick = () => {
+    navigate("/loginIn/mobileSavedChat");
+  };
+
+  const handleChatClick = () => {
     navigate("/loginIn/health-bot");
   };
 
   return (
-    <div className="h-auto bg-blue-100 p-6 flex flex-col">
+    <div className="h-auto bg-[#C0D6E4] p-6 flex flex-col">
       {/* Header Section */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center ">
@@ -91,16 +97,27 @@ export default function GetHealthTips() {
 
       {/* Greeting Section */}
       <div className="flex justify-center items-center flex-col flex-grow mt-7">
-        <p className="text-lg font-normal text-white text-center">
-          Hello, User 👋
-        </p>
-        <p className="text-2xl font-semibold text-white text-center">
-          Get health tips
-        </p>
-        <button className="mt-2 mb-5 text-white flex gap-2 items-center justify-center">
-          <img src={message} alt="message icon" className="w-6 h-6" />
-          Tap to chat
-        </button>
+        <img src={circle} alt="" className="relative h-[256px] w-[256px]" />
+        <div className="absolute">
+          <img
+            src={circle2}
+            alt=""
+            className="absolute right-[-30px] md:right-[-50px] top-[-90px] md:top-[-100px] w-[96px] h-[96px]"
+          />
+          <p className="text-lg font-normal text-white text-center">
+            Hello, User 👋
+          </p>
+          <p className="text-2xl mt-5 font-semibold text-white text-center">
+            Get health tips
+          </p>
+          <button
+            onClick={handleChatClick}
+            className="mt-5 mb-5 text-white text-center flex gap-2 items-center justify-center"
+          >
+            <img src={message} alt="message icon" className="w-6 h-6" />
+            Tap to chat
+          </button>
+        </div>
       </div>
 
       {/* Explore & Health News Section */}

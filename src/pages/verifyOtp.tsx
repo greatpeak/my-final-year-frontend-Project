@@ -32,7 +32,7 @@ const VerifyOtp: React.FC = () => {
   };
 
   return (
-    <div className="flex relative items-center justify-center min-h-screen bg-blue-100 px-4 md:px-0">
+    <div className="flex relative items-center justify-center min-h-screen bg-[#C0D6E4] px-4 md:px-0">
       <div className="p-6 md:p-12 text-center w-full max-w-md md:max-w-lg">
         {/* OTP Verification */}
         <a href="/signup">

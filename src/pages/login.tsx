@@ -15,7 +15,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="flex relative items-center justify-center min-h-screen bg-blue-100 px-4 md:px-0">
+    <div className="flex relative items-center justify-center min-h-screen bg-[#C0D6E4] px-4 md:px-0">
       <div className="p-6 md:p-12 text-center w-full max-w-md md:max-w-lg">
         {/* Logo and Robot */}
         <div className="space-y-6">
@@ -32,8 +32,10 @@ const Login: React.FC = () => {
 
         {/* Login Form */}
         <div className="mt-8">
-          <h2 className="text-2xl text-left md:text-3xl font-semibold">
-            <span className="text-[#72BEEE]">Log in </span>to your account
+          <h2 className="text-2xl text-left md:text-3xl font-semibold text-white">
+            <span className="text-[#72BEEE]">Log in </span>
+            <br />
+            to your account
           </h2>
           <form className="mt-6 space-y-4" onSubmit={handleLogin}>
             <div>

@@ -13,7 +13,7 @@ export default function HealthBot() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-blue-100">
+    <div className="min-h-screen flex flex-col bg-[#C0D6E4]">
       {/* Header Section Big Screen */}
       <div className="p-4 align-right hidden md:block">
         <div className="flex items-center">

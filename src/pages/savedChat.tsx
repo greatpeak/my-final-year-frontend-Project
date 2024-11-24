@@ -15,7 +15,7 @@ export default function SavedChat() {
   return (
     <div className="flex w-full h-auto">
       {/* Sidebar */}
-      <div className="hidden lg:flex w-1/4 bg-blue-100 flex-col p-4 border-r-2">
+      <div className="hidden lg:flex w-1/4 bg-[#C0D6E4] flex-col p-4 border-r-2">
         <img src={Logo} className="w-[149px] h-[36px] mb-3" alt="" />
         <h6 className="text-white mb-3">Saved Chat</h6>
         <div className="relative">

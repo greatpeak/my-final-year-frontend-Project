@@ -32,7 +32,7 @@ export default function ExplorePage() {
   };
 
   return (
-    <div className="min-h-screen bg-blue-100 p-6 flex flex-col">
+    <div className="min-h-screen bg-[#C0D6E4] p-6 flex flex-col">
       {/* Header Section */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center">
@@ -48,7 +48,7 @@ export default function ExplorePage() {
         <button
           className="bg-[#72BEEE] flex gap-1 text-white text-sm px-4 py-2 rounded-lg md:hidden"
           aria-label="View saved chat"
-          onClick={() => navigate("/loginIn/health-bot")} 
+          onClick={() => navigate("/loginIn/mobileSavedChat")}
         >
           <img src={chatIcon} alt="Chat Icon" className="w-5 h-5" />
           View saved chat
