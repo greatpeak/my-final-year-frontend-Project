@@ -1,40 +1,72 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 import Logo from "../assets/Frame 2.svg";
+import { API_BASE_URL } from "../base_url";
 
 const VerifyOtp: React.FC = () => {
-  const navigate = useNavigate();
-  const [otp, setOtp] = useState<string[]>(Array(5).fill(""));
+  const { email } = useParams<{ email: string }>();
+  const [otp, setOtp] = useState<string[]>(Array(4).fill(""));
+  const [loading, setLoading] = useState<boolean>(false);
+  const [resendLoading, setResendLoading] = useState<boolean>(false);
 
-  // Handle OTP input changes
   const handleOtpChange = (value: string, index: number) => {
     const updatedOtp = [...otp];
-    updatedOtp[index] = value.slice(-1); // Ensure only the last character is kept
+    updatedOtp[index] = value.slice(-1);
     setOtp(updatedOtp);
 
-    // Auto-focus the next input field
     if (value && index < otp.length - 1) {
       const nextInput = document.getElementById(`otp-${index + 1}`);
       if (nextInput) (nextInput as HTMLInputElement).focus();
     }
   };
 
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Check if all OTP fields are filled
     if (otp.every((digit) => digit !== "")) {
-      navigate("/loginIn/health-tips");
+      const otpCode = otp.join("");
+
+      try {
+        setLoading(true);
+        const response = await axios.post(API_BASE_URL + "/verify-email", {
+          email,
+          otp: otpCode,
+        });
+
+        if (response.status === 200) {
+          window.location.href = "/loginIn/health-tips";
+        }
+      } catch (error) {
+        console.error("Verification failed", error);
+        alert("Invalid OTP. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     } else {
       alert("Please complete the OTP.");
+    }
+  };
+
+  const handleResendCode = async () => {
+    try {
+      setResendLoading(true);
+      const response = await axios.post(API_BASE_URL + "/request-otp", { email });
+
+      if (response.status === 200) {
+        alert("A new OTP has been sent to your email.");
+      }
+    } catch (error) {
+      console.error("Resend code failed", error);
+      alert("Failed to resend the code. Please try again.");
+    } finally {
+      setResendLoading(false);
     }
   };
 
   return (
     <div className="flex relative items-center justify-center min-h-screen bg-[#C0D6E4] px-4 md:px-0">
       <div className="p-6 md:p-12 text-center w-full max-w-md md:max-w-lg">
-        {/* OTP Verification */}
         <a href="/signup">
           <img
             src={Logo}
@@ -44,20 +76,15 @@ const VerifyOtp: React.FC = () => {
         </a>
 
         <div className="space-y-6">
-          <h2 className="text-2xl md:text-3xl font-semibold text-white">
-            Verify it’s you
-          </h2>
+          <h2 className="text-2xl md:text-3xl font-semibold text-white">Verify it’s you</h2>
           <p className="text-sm text-white">
-            We sent a verification code to your email. Enter the code below to
-            continue.
+            We sent a verification code to your email: <strong>{email}</strong>. Enter the code
+            below to continue.
           </p>
 
           <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
             <div className="text-left">
-              <label
-                htmlFor="otp"
-                className="block text-sm font-medium text-white mb-2"
-              >
+              <label htmlFor="otp" className="block text-sm font-medium text-white mb-2">
                 Input code
               </label>
               <div className="flex justify-center gap-2 md:gap-4">
@@ -75,17 +102,22 @@ const VerifyOtp: React.FC = () => {
               </div>
             </div>
             <div className="text-right">
-              <a href="#" className="text-sm text-white hover:underline">
-                Resend code
-              </a>
+              <button
+                type="button"
+                className="text-sm text-white hover:underline disabled:opacity-50"
+                onClick={handleResendCode}
+                disabled={resendLoading}
+              >
+                {resendLoading ? "Resending..." : "Resend code"}
+              </button>
             </div>
 
-            {/* Continue Button */}
             <button
               type="submit"
               className="w-full py-2 text-white bg-[#72BEEE] rounded-md hover:bg-blue-500 transition duration-300"
+              disabled={loading}
             >
-              Continue
+              {loading ? "Verifying..." : "Continue"}
             </button>
           </form>
         </div>
