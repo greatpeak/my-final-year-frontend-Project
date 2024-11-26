@@ -5,7 +5,6 @@ import Robot from "../assets/Graident_Ai_Robot_1-removebg-preview 1.svg";
 import Logo from "../assets/Frame 2.svg";
 import { API_BASE_URL } from "../base_url";
 
-
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
 };
@@ -14,7 +13,7 @@ const ResetPassword: React.FC = () => {
   const navigate = useNavigate();
   const query = useQuery();
   const code = query.get("code");
-   const email = query.get("email");
+  const email = query.get("email");
   const [newPassword, setNewPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -39,13 +38,14 @@ const ResetPassword: React.FC = () => {
     }
     try {
       const response = await axios.post(`${API_BASE_URL}/reset-password`, {
-        token: code,
+        otp: code,
         password: newPassword,
         email,
       });
 
       if (response.status === 200) {
         setSuccessMessage("Your password has been successfully reset.");
+        navigate("/login");
       }
     } catch (err: any) {
       setError(err.response?.data?.message || "Something went wrong. Please try again.");
