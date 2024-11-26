@@ -4,7 +4,7 @@ import axios from "axios";
 import Logo from "../assets/Frame 2.svg";
 import { API_BASE_URL } from "../base_url";
 
-const VerifyOtp: React.FC = () => {
+const VerifyEmail: React.FC = () => {
   const { email } = useParams<{ email: string }>();
   const [otp, setOtp] = useState<string[]>(Array(4).fill(""));
   const [loading, setLoading] = useState<boolean>(false);
@@ -35,7 +35,7 @@ const VerifyOtp: React.FC = () => {
         });
 
         if (response.status === 200) {
-          window.location.href = "/loginIn/health-tips";
+          window.location.href = "/app/health-tips";
         }
       } catch (error) {
         console.error("Verification failed", error);
@@ -126,4 +126,4 @@ const VerifyOtp: React.FC = () => {
   );
 };
 
-export default VerifyOtp;
+export default VerifyEmail;

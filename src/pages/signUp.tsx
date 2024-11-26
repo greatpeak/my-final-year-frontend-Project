@@ -46,7 +46,7 @@ const Signup: React.FC = () => {
         const errorData = await response.json();
         throw new Error(errorData.message || "Signup failed");
       }
-      navigate("/verify-otp/" + formData.email);
+      navigate("/verify-email/" + formData.email);
     } catch (error: any) {
       setErrorMessage(error.message);
     }

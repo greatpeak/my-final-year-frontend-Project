@@ -1,35 +1,53 @@
-import React, { FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { FormEvent, useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import Robot from "../assets/Graident_Ai_Robot_1-removebg-preview 1.svg";
 import Logo from "../assets/Frame 2.svg";
 import { API_BASE_URL } from "../base_url";
 
-const Login: React.FC = () => {
+
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+};
+
+const ResetPassword: React.FC = () => {
   const navigate = useNavigate();
+  const query = useQuery();
+  const code = query.get("code");
+   const email = query.get("email");
+  const [newPassword, setNewPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  useEffect(() => {
+    if (!code) {
+      setError("Invalid or expired reset code.");
+    }
+  }, [code]);
+
+  const handleResetPassword = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setError(null);
+    setSuccessMessage(null);
     setLoading(true);
-
-    const email = (document.getElementById("email") as HTMLInputElement).value;
-    const password = (document.getElementById("password") as HTMLInputElement).value;
-
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match.");
+      setLoading(false);
+      return;
+    }
     try {
-      const response = await axios.post(`${API_BASE_URL}/login`, { email, password });
+      const response = await axios.post(`${API_BASE_URL}/reset-password`, {
+        token: code,
+        password: newPassword,
+        email,
+      });
 
       if (response.status === 200) {
-        const { user_credentials } = response.data;
-        console.log(user_credentials);
-        localStorage.setItem("healthUserToken", user_credentials.token);
-        localStorage.setItem("healthUserId", user_credentials.userId);
-        navigate("/app/health-tips");
+        setSuccessMessage("Your password has been successfully reset.");
       }
     } catch (err: any) {
-      console.error("Login error:", err);
       setError(err.response?.data?.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
@@ -53,43 +71,48 @@ const Login: React.FC = () => {
         </div>
         <div className="mt-8">
           <h2 className="text-2xl text-left md:text-3xl font-semibold text-white">
-            <span className="text-[#72BEEE]">Log in </span>
-            <br />
-            to your account
+            <span className="text-[#72BEEE]">Reset your password</span>
           </h2>
+
+          {/* Error or Success message */}
           {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
-          <form className="mt-6 space-y-4" onSubmit={handleLogin}>
+          {successMessage && <p className="text-sm text-green-500 mt-2">{successMessage}</p>}
+
+          {/* Reset Password Form */}
+          <form className="mt-6 space-y-4" onSubmit={handleResetPassword}>
             <div>
-              <label htmlFor="email" className="block text-left text-sm font-medium text-white">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                placeholder="Email"
-                className="w-full px-4 py-2 border border-white rounded-md focus:ring-2 focus:ring-[#72BEEE] focus:outline-none"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="block text-left text-sm font-medium text-white">
-                Password
+              <label
+                htmlFor="newPassword"
+                className="block text-left text-sm font-medium text-white"
+              >
+                New Password
               </label>
               <input
                 type="password"
-                id="password"
-                placeholder="Password"
+                id="newPassword"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Enter your new password"
                 className="w-full px-4 py-2 border border-white rounded-md focus:ring-2 focus:ring-[#72BEEE] focus:outline-none"
                 required
               />
             </div>
-            <div className="text-right">
-              <button
-                onClick={() => navigate("/forgot-password")}
-                className="text-sm text-white hover:underline"
+            <div>
+              <label
+                htmlFor="confirmPassword"
+                className="block text-left text-sm font-medium text-white"
               >
-                Forgot password?
-              </button>
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm your new password"
+                className="w-full px-4 py-2 border border-white rounded-md focus:ring-2 focus:ring-[#72BEEE] focus:outline-none"
+                required
+              />
             </div>
             <button
               type="submit"
@@ -98,18 +121,18 @@ const Login: React.FC = () => {
                 loading ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {loading ? "Logging in..." : "Continue"}
+              {loading ? "Resetting..." : "Reset Password"}
             </button>
           </form>
         </div>
 
         <div className="mt-4 text-sm text-white">
-          Don't have an account?{" "}
+          Remembered your password?{" "}
           <button
-            onClick={() => navigate("/signup")}
+            onClick={() => navigate("/login")}
             className="font-medium text-[#72BEEE] hover:underline"
           >
-            Sign up
+            Log in
           </button>
         </div>
       </div>
@@ -117,4 +140,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default ResetPassword;
