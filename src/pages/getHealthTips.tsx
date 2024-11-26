@@ -57,19 +57,19 @@ export default function GetHealthTips() {
   ];
 
   const handleExploreClick = () => {
-    navigate("/loginIn/explore");
+    navigate("/app/explore");
   };
 
   const handleHealthNewsClick = () => {
-    navigate("/loginIn/health-news");
+    navigate("/app/health-news");
   };
 
   const handleViewSavedChatClick = () => {
-    navigate("/loginIn/mobileSavedChat");
+    navigate("/app/mobileSavedChat");
   };
 
   const handleChatClick = () => {
-    navigate("/loginIn/health-bot");
+    navigate("/app/health-bot");
   };
 
   return (
@@ -77,14 +77,8 @@ export default function GetHealthTips() {
       {/* Header Section */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center ">
-          <img
-            src={personImage}
-            alt="User Avatar"
-            className="w-10 h-10 rounded-full"
-          />
-          <p className="ml-3 text-sm text-white font-semibold hidden md:block">
-            johndoe@gmail.com
-          </p>
+          <img src={personImage} alt="User Avatar" className="w-10 h-10 rounded-full" />
+          <p className="ml-3 text-sm text-white font-semibold hidden md:block">johndoe@gmail.com</p>
         </div>
         <button
           className="bg-[#72BEEE] flex gap-1 text-white text-sm px-4 py-2 rounded-lg md:hidden"
@@ -104,12 +98,8 @@ export default function GetHealthTips() {
             alt=""
             className="absolute right-[-30px] md:right-[-50px] top-[-90px] md:top-[-100px] w-[96px] h-[96px]"
           />
-          <p className="text-lg font-normal text-white text-center">
-            Hello, User 👋
-          </p>
-          <p className="text-2xl mt-5 font-semibold text-white text-center">
-            Get health tips
-          </p>
+          <p className="text-lg font-normal text-white text-center">Hello, User 👋</p>
+          <p className="text-2xl mt-5 font-semibold text-white text-center">Get health tips</p>
           <button
             onClick={handleChatClick}
             className="mt-5 mb-5 text-white text-center flex gap-2 items-center justify-center"
@@ -139,10 +129,7 @@ export default function GetHealthTips() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {topics.map((topic, index) => (
-            <div
-              key={index}
-              className="bg-[#72BEEE] text-white p-4 rounded-lg shadow-lg"
-            >
+            <div key={index} className="bg-[#72BEEE] text-white p-4 rounded-lg shadow-lg">
               <p className="text-lg font-semibold">{topic.name}</p>
               <p className="text-sm">{topic.description}</p>
             </div>

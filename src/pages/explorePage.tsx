@@ -24,11 +24,11 @@ export default function ExplorePage() {
   ];
 
   const handleExploreClick = () => {
-    navigate("/loginIn/explore");
+    navigate("/app/explore");
   };
 
   const handleHealthNewsClick = () => {
-    navigate("/loginIn/health-news");
+    navigate("/app/health-news");
   };
 
   return (
@@ -36,19 +36,13 @@ export default function ExplorePage() {
       {/* Header Section */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center">
-          <img
-            src={personImage}
-            alt="User Avatar"
-            className="w-10 h-10 rounded-full"
-          />
-          <p className="ml-3 text-sm text-white font-semibold hidden md:block">
-            johndoe@gmail.com
-          </p>
+          <img src={personImage} alt="User Avatar" className="w-10 h-10 rounded-full" />
+          <p className="ml-3 text-sm text-white font-semibold hidden md:block">johndoe@gmail.com</p>
         </div>
         <button
           className="bg-[#72BEEE] flex gap-1 text-white text-sm px-4 py-2 rounded-lg md:hidden"
           aria-label="View saved chat"
-          onClick={() => navigate("/loginIn/mobileSavedChat")}
+          onClick={() => navigate("/app/mobileSavedChat")}
         >
           <img src={chatIcon} alt="Chat Icon" className="w-5 h-5" />
           View saved chat
