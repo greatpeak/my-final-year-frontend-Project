@@ -19,7 +19,6 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
 
-        {/* Add /loginIn route here with nested routes */}
         <Route path="/loginIn" element={<SavedChat />}>
           <Route path="health-tips" element={<GetHealthTips />} />
           <Route path="explore" element={<ExplorePage />} />
