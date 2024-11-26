@@ -10,6 +10,7 @@ import SavedChat from "./pages/savedChat";
 import ExplorePage from "./pages/explorePage";
 import HealthNews from "./pages/healthNews";
 import ForgetPassword from "./pages/forgetPassword";
+import ResetPassword from "./pages/reset-passord";
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
         <Route path="/" element={<GetStarted />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/verify-email/:email" element={<VerifyEmail />} />
         <Route path="/forgot-password" element={<ForgetPassword />} />
         <Route path="/app" element={<SavedChat />}>

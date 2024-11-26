@@ -6,7 +6,7 @@ import arrow from "../assets/Arrow-Left.svg";
 import menu from "../assets/Menu-Alt-2.svg";
 
 export default function HealthBot() {
-  const navigate = useNavigate(); // Initialize navigate function
+  const navigate = useNavigate(); 
 
   const handleGoBack = () => {
     navigate(-1); // Go back to the previous page
@@ -14,7 +14,6 @@ export default function HealthBot() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#C0D6E4]">
-      {/* Header Section Big Screen */}
       <div className="p-4 align-right hidden md:block">
         <div className="flex items-center">
           <img
@@ -27,8 +26,6 @@ export default function HealthBot() {
           </p>
         </div>
       </div>
-
-      {/* Header Mobile Screen */}
       <div className="w-full bg-white md:hidden justify-between h-[56px] items-center px-2 flex">
         <button onClick={handleGoBack}>
           <img src={arrow} alt="Back Arrow" />
@@ -38,18 +35,13 @@ export default function HealthBot() {
           <img src={menu} alt="Menu" />
         </button>
       </div>
-
-      {/* Chat Messages Section */}
       <div className="flex-grow p-4 space-y-4">
-        {/* Bot Message */}
         <div className="flex items-start space-x-3">
           <img src={robotImage} alt="" className="h-[24px] w-[20px]" />
           <div className="bg-white p-3 rounded-lg shadow-md">
             <p>What question should I help you with?</p>
           </div>
         </div>
-
-        {/* User Message */}
         <div className="flex items-start space-x-3 justify-end">
           <div className="bg-[#72BEEE] text-white p-3 rounded-lg shadow-md">
             <p>
@@ -60,8 +52,6 @@ export default function HealthBot() {
           <img src={personImage} alt="" className="h-auto w-auto" />
         </div>
       </div>
-
-      {/* Input Section */}
       <div className="fixed bottom-6 right-0 w-full max-w-[761px] flex items-center p-3 md:bottom-6 md:right-14">
         <input
           type="text"
