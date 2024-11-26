@@ -23,8 +23,7 @@ export default function HealthNews() {
       id: 1,
       tag: "News",
       time: time,
-      title:
-        "Unicef to start building health centers in major west African countries",
+      title: "Unicef to start building health centers in major west African countries",
       image: sampleImage,
     },
     {
@@ -51,16 +50,16 @@ export default function HealthNews() {
   };
 
   const handleExploreClick = () => {
-    navigate("/loginIn/explore");
+    navigate("/app/explore");
   };
 
   const handleHealthNewsClick = () => {
-    navigate("/loginIn/health-news");
+    navigate("/app/health-news");
   };
 
   const handleViewChatClick = () => {
     // Navigate to the HealthBot page when the button is clicked
-    navigate("/loginIn/mobileSavedChat");
+    navigate("/app/mobileSavedChat");
   };
 
   return (
@@ -68,11 +67,7 @@ export default function HealthNews() {
       {/* Header Section */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center">
-          <img
-            src={personImage}
-            alt="User Avatar"
-            className="w-10 h-10 rounded-full"
-          />
+          <img src={personImage} alt="User Avatar" className="w-10 h-10 rounded-full" />
           <p className="ml-3 text-sm  text-white font-semibold hidden md:block">
             johndoe@gmail.com
           </p>
@@ -138,22 +133,16 @@ export default function HealthNews() {
                   </svg>
                   {dropdownVisible === item.id && (
                     <div className="absolute right-0 mt-2 bg-white text-black rounded-lg shadow-lg w-24">
-                      <button className="block px-4 py-2 text-sm hover:bg-gray-100">
-                        Share
-                      </button>
+                      <button className="block px-4 py-2 text-sm hover:bg-gray-100">Share</button>
                       <div className="w-[80%] h-[1px] bg-black mx-2"></div>
-                      <button className="block px-4 py-2 text-sm hover:bg-gray-100">
-                        Remove
-                      </button>
+                      <button className="block px-4 py-2 text-sm hover:bg-gray-100">Remove</button>
                     </div>
                   )}
                 </button>
               </div>
 
               {/* Title*/}
-              <p className="text-white text-base font-medium mb-2">
-                {item.title}
-              </p>
+              <p className="text-white text-base font-medium mb-2">{item.title}</p>
 
               {/* Image */}
               <img

@@ -13,7 +13,7 @@ export default function MobileSavedChat() {
   };
 
   const handleOpenChat = () => {
-    navigate("/loginIn/health-bot"); // Navigate to health-bot page
+    navigate("/app/health-bot"); // Navigate to health-bot page
   };
 
   return (
@@ -52,17 +52,13 @@ export default function MobileSavedChat() {
 
             {/* Chat Description */}
             <p className="text-sm text-white mb-3">
-              Stages of diabetes are categorized based on the condition of the
-              patient. It is advised th...
+              Stages of diabetes are categorized based on the condition of the patient. It is
+              advised th...
             </p>
 
             {/* Bottom Section */}
             <div className="flex items-center gap-2">
-              <img
-                src={personIcon}
-                alt="Person Icon"
-                className="w-6 h-6 rounded-full"
-              />
+              <img src={personIcon} alt="Person Icon" className="w-6 h-6 rounded-full" />
               <button
                 className="text-sm text-white underline"
                 onClick={handleOpenChat} // Navigate on button click

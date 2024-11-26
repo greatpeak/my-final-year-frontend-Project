@@ -5,31 +5,26 @@ import Robot from "../assets/Graident_Ai_Robot_1-removebg-preview 1.svg";
 import Logo from "../assets/Frame 2.svg";
 import { API_BASE_URL } from "../base_url";
 
-const Login: React.FC = () => {
+const ForgetPassword: React.FC = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const handleLogin = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleResetPassword = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setError(null);
+    setSuccessMessage(null);
     setLoading(true);
 
-    const email = (document.getElementById("email") as HTMLInputElement).value;
-    const password = (document.getElementById("password") as HTMLInputElement).value;
-
     try {
-      const response = await axios.post(`${API_BASE_URL}/login`, { email, password });
+      const response = await axios.post(`${API_BASE_URL}/forgot-password`, { email });
 
       if (response.status === 200) {
-        const { user_credentials } = response.data;
-        console.log(user_credentials);
-        localStorage.setItem("healthUserToken", user_credentials.token);
-        localStorage.setItem("healthUserId", user_credentials.userId);
-        navigate("/app/health-tips");
+        setSuccessMessage("A password reset link has been sent to your email.");
       }
     } catch (err: any) {
-      console.error("Login error:", err);
       setError(err.response?.data?.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
@@ -53,43 +48,28 @@ const Login: React.FC = () => {
         </div>
         <div className="mt-8">
           <h2 className="text-2xl text-left md:text-3xl font-semibold text-white">
-            <span className="text-[#72BEEE]">Log in </span>
-            <br />
-            to your account
+            <span className="text-[#72BEEE]">Forgot password?</span>
           </h2>
+
+          {/* Error or Success message */}
           {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
-          <form className="mt-6 space-y-4" onSubmit={handleLogin}>
+          {successMessage && <p className="text-sm text-green-500 mt-2">{successMessage}</p>}
+
+          {/* Reset Password Form */}
+          <form className="mt-6 space-y-4" onSubmit={handleResetPassword}>
             <div>
               <label htmlFor="email" className="block text-left text-sm font-medium text-white">
-                Email
+                Enter your email address
               </label>
               <input
                 type="email"
                 id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
                 className="w-full px-4 py-2 border border-white rounded-md focus:ring-2 focus:ring-[#72BEEE] focus:outline-none"
                 required
               />
-            </div>
-            <div>
-              <label htmlFor="password" className="block text-left text-sm font-medium text-white">
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                placeholder="Password"
-                className="w-full px-4 py-2 border border-white rounded-md focus:ring-2 focus:ring-[#72BEEE] focus:outline-none"
-                required
-              />
-            </div>
-            <div className="text-right">
-              <button
-                onClick={() => navigate("/forgot-password")}
-                className="text-sm text-white hover:underline"
-              >
-                Forgot password?
-              </button>
             </div>
             <button
               type="submit"
@@ -98,18 +78,18 @@ const Login: React.FC = () => {
                 loading ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {loading ? "Logging in..." : "Continue"}
+              {loading ? "Sending..." : "Send Reset Link"}
             </button>
           </form>
         </div>
 
         <div className="mt-4 text-sm text-white">
-          Don't have an account?{" "}
+          Remember your password?{" "}
           <button
-            onClick={() => navigate("/signup")}
+            onClick={() => navigate("/login")}
             className="font-medium text-[#72BEEE] hover:underline"
           >
-            Sign up
+            Log in
           </button>
         </div>
       </div>
@@ -117,4 +97,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default ForgetPassword;

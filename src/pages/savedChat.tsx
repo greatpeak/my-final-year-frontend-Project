@@ -9,7 +9,7 @@ export default function SavedChat() {
   const navigate = useNavigate(); // useNavigate hook to navigate programmatically
 
   const handleOpenChat = () => {
-    navigate("/loginIn/health-bot"); // Navigate to the health-bot route
+    navigate("/app/health-bot"); // Navigate to the health-bot route
   };
 
   return (
@@ -19,11 +19,7 @@ export default function SavedChat() {
         <img src={Logo} className="w-[149px] h-[36px] mb-3" alt="" />
         <h6 className="text-white mb-3">Saved Chat</h6>
         <div className="relative">
-          <img
-            src={search}
-            alt=""
-            className="absolute left-2 top-3 text-gray-300"
-          />
+          <img src={search} alt="" className="absolute left-2 top-3 text-gray-300" />
           <input
             type="text"
             placeholder="Search for message"
@@ -32,10 +28,7 @@ export default function SavedChat() {
         </div>
         <div className="mt-4 flex-grow space-y-4">
           {[...Array(3)].map((_, index) => (
-            <div
-              key={index}
-              className="bg-[#72BEEE] p-3 rounded-2xl shadow-sm flex flex-col"
-            >
+            <div key={index} className="bg-[#72BEEE] p-3 rounded-2xl shadow-sm flex flex-col">
               <div className="flex justify-between mb-3">
                 <button>
                   <img src={Time} alt="" />
@@ -45,8 +38,8 @@ export default function SavedChat() {
                 </button>
               </div>
               <p className="text-sm text-white">
-                Stages of diabetes are categorized based on the condition of the
-                patient. It is advised th...
+                Stages of diabetes are categorized based on the condition of the patient. It is
+                advised th...
               </p>
               <div className="algin-left flex align-middle mt-2 gap-2 items-center">
                 <img src={person} alt="" />

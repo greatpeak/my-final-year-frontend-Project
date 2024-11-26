@@ -6,6 +6,7 @@ import { API_BASE_URL } from "../base_url";
 
 const Signup: React.FC = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -28,7 +29,7 @@ const Signup: React.FC = () => {
       return;
     }
     setErrorMessage("");
-
+    setLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}/signup`, {
         method: "POST",
@@ -44,10 +45,13 @@ const Signup: React.FC = () => {
       });
       if (!response.ok) {
         const errorData = await response.json();
+        setLoading(false);
         throw new Error(errorData.message || "Signup failed");
       }
-      navigate("/verify-otp");
+      setLoading(false);
+      navigate("/verify-email/" + formData.email);
     } catch (error: any) {
+      setLoading(false);
       setErrorMessage(error.message);
     }
   };
@@ -75,15 +79,10 @@ const Signup: React.FC = () => {
             your account
           </h2>
           <form className="mt-6 space-y-4" onSubmit={handleSignup}>
-            {errorMessage && (
-              <div className="text-red-500 text-sm">{errorMessage}</div>
-            )}
+            {errorMessage && <div className="text-red-500 text-sm">{errorMessage}</div>}
 
             <div>
-              <label
-                htmlFor="firstName"
-                className="block text-left text-sm font-medium text-white"
-              >
+              <label htmlFor="firstName" className="block text-left text-sm font-medium text-white">
                 First Name
               </label>
               <input
@@ -98,10 +97,7 @@ const Signup: React.FC = () => {
             </div>
 
             <div>
-              <label
-                htmlFor="lastName"
-                className="block text-left text-sm font-medium text-white"
-              >
+              <label htmlFor="lastName" className="block text-left text-sm font-medium text-white">
                 Last Name
               </label>
               <input
@@ -116,10 +112,7 @@ const Signup: React.FC = () => {
             </div>
 
             <div>
-              <label
-                htmlFor="email"
-                className="block text-left text-sm font-medium text-white"
-              >
+              <label htmlFor="email" className="block text-left text-sm font-medium text-white">
                 Email
               </label>
               <input
@@ -134,10 +127,7 @@ const Signup: React.FC = () => {
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block text-left text-sm font-medium text-white"
-              >
+              <label htmlFor="password" className="block text-left text-sm font-medium text-white">
                 Password
               </label>
               <input
@@ -173,7 +163,7 @@ const Signup: React.FC = () => {
               type="submit"
               className="w-full py-2 text-white bg-[#72BEEE] rounded-md hover:bg-blue-500 transition duration-300"
             >
-              Continue
+              {loading ? "Sending..." : "Create Account"}
             </button>
           </form>
         </div>
