@@ -35,6 +35,11 @@ const VerifyEmail: React.FC = () => {
         });
 
         if (response.status === 200) {
+          const { user_credentials } = response.data;
+          console.log(user_credentials);
+          localStorage.setItem("healthUserToken", user_credentials.token);
+          localStorage.setItem("healthUserId", user_credentials.userId);
+
           window.location.href = "/app/health-tips";
         }
       } catch (error) {

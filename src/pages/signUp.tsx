@@ -6,6 +6,7 @@ import { API_BASE_URL } from "../base_url";
 
 const Signup: React.FC = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -28,7 +29,7 @@ const Signup: React.FC = () => {
       return;
     }
     setErrorMessage("");
-
+    setLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}/signup`, {
         method: "POST",
@@ -44,10 +45,13 @@ const Signup: React.FC = () => {
       });
       if (!response.ok) {
         const errorData = await response.json();
+        setLoading(false);
         throw new Error(errorData.message || "Signup failed");
       }
+      setLoading(false);
       navigate("/verify-email/" + formData.email);
     } catch (error: any) {
+      setLoading(false);
       setErrorMessage(error.message);
     }
   };
@@ -159,7 +163,7 @@ const Signup: React.FC = () => {
               type="submit"
               className="w-full py-2 text-white bg-[#72BEEE] rounded-md hover:bg-blue-500 transition duration-300"
             >
-              Continue
+              {loading ? "Sending..." : "Create Account"}
             </button>
           </form>
         </div>
