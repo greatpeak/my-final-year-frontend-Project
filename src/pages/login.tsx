@@ -1,17 +1,39 @@
-import React, { FormEvent } from "react";
+import React, { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import Robot from "../assets/Graident_Ai_Robot_1-removebg-preview 1.svg";
 import Logo from "../assets/Frame 2.svg";
+import { API_BASE_URL } from "../base_url";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  // Handle form submission
-  const handleLogin = (e: FormEvent<HTMLFormElement>): void => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
+    setError(null);
+    setLoading(true);
 
-    // You can add validation or API calls here before navigating
-    navigate("/loginIn/health-tips");
+    const email = (document.getElementById("email") as HTMLInputElement).value;
+    const password = (document.getElementById("password") as HTMLInputElement).value;
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}/login`, { email, password });
+
+      if (response.status === 200) {
+        const { user_credentials } = response.data;
+        console.log(user_credentials);
+        localStorage.setItem("healthUserToken", user_credentials.token);
+        localStorage.setItem("healthUserId", user_credentials.userId);
+        navigate("/app/health-tips");
+      }
+    } catch (err: any) {
+      console.error("Login error:", err);
+      setError(err.response?.data?.message || "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -29,14 +51,13 @@ const Login: React.FC = () => {
 
           <img src={Robot} alt="Robot" className="mx-auto w-28 md:w-40" />
         </div>
-
-        {/* Login Form */}
         <div className="mt-8">
           <h2 className="text-2xl text-left md:text-3xl font-semibold text-white">
             <span className="text-[#72BEEE]">Log in </span>
             <br />
             to your account
           </h2>
+          {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
           <form className="mt-6 space-y-4" onSubmit={handleLogin}>
             <div>
               <label htmlFor="email" className="block text-left text-sm font-medium text-white">
@@ -69,14 +90,16 @@ const Login: React.FC = () => {
             </div>
             <button
               type="submit"
-              className="w-full py-2 text-white bg-[#72BEEE] rounded-md hover:bg-blue-500 transition duration-300"
+              disabled={loading}
+              className={`w-full py-2 text-white bg-[#72BEEE] rounded-md hover:bg-blue-500 transition duration-300 ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
-              Continue
+              {loading ? "Logging in..." : "Continue"}
             </button>
           </form>
         </div>
 
-        {/* Signup Message */}
         <div className="mt-4 text-sm text-white">
           Don't have an account?{" "}
           <button

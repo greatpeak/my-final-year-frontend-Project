@@ -19,12 +19,12 @@ const App = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-otp/:email" element={<VerifyOtp />} />
 
-        <Route path="/loginIn" element={<SavedChat />}>
-          <Route path="/health-tips" element={<GetHealthTips />} />
-          <Route path="/explore" element={<ExplorePage />} />
-          <Route path="/health-news" element={<HealthNews />} />
-          <Route path="/health-bot" element={<HealthBot />} />
-          <Route path="/mobileSavedChat" element={<MobileSavedChat />} />
+        <Route path="/app" element={<SavedChat />}>
+          <Route path="health-tips" element={<GetHealthTips />} />
+          <Route path="explore" element={<ExplorePage />} />
+          <Route path="health-news" element={<HealthNews />} />
+          <Route path="health-bot" element={<HealthBot />} />
+          <Route path="mobileSavedChat" element={<MobileSavedChat />} />
         </Route>
       </Routes>
     </Router>
