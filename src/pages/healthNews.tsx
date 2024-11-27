@@ -17,13 +17,15 @@ interface NewsItem {
 export default function HealthNews() {
   const navigate = useNavigate();
   const [dropdownVisible, setDropdownVisible] = useState<number | null>(null);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
   const news: NewsItem[] = [
     {
       id: 1,
       tag: "News",
       time: time,
-      title: "Unicef to start building health centers in major west African countries",
+      title:
+        "Unicef to start building health centers in major west African countries",
       image: sampleImage,
     },
     {
@@ -44,9 +46,27 @@ export default function HealthNews() {
     },
   ];
 
-  // Function to toggle dropdown visibility
   const toggleDropdown = (id: number) => {
     setDropdownVisible(dropdownVisible === id ? null : id);
+  };
+
+  const toggleProfileDropdown = () => {
+    setShowProfileDropdown((prev) => !prev);
+  };
+
+  const handlePreviousChats = () => {
+    navigate("/app/mobileSavedChat");
+    setShowProfileDropdown(false);
+  };
+
+  const handleLogout = () => {
+    const confirmLogout = window.confirm("Are you sure you want to log out?");
+    if (confirmLogout) {
+      localStorage.removeItem("healthUserToken");
+      localStorage.removeItem("healthUserId");
+      navigate("/login");
+      setShowProfileDropdown(false);
+    }
   };
 
   const handleExploreClick = () => {
@@ -57,25 +77,56 @@ export default function HealthNews() {
     navigate("/app/health-news");
   };
 
-  const handleViewChatClick = () => {
-    // Navigate to the HealthBot page when the button is clicked
-    navigate("/app/mobileSavedChat");
-  };
-
   return (
     <div className="min-h-screen bg-[#C0D6E4] p-6">
-      {/* Header Section */}
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center">
-          <img src={personImage} alt="User Avatar" className="w-10 h-10 rounded-full" />
-          <p className="ml-3 text-sm  text-white font-semibold hidden md:block">
-            johndoe@gmail.com
-          </p>
+      {/* Desktop only */}
+      <div className="hidden md:flex justify-end">
+        <img
+          src={personImage}
+          alt="User Avatar"
+          className="w-10 h-10 rounded-full cursor-pointer"
+          onClick={toggleProfileDropdown}
+        />
+        <p className="ml-3 text-sm text-white font-semibold hidden md:block">
+          johndoe@gmail.com
+        </p>
+        {showProfileDropdown && (
+          <div className="absolute right-12 top-14 mt-2 w-40 bg-white shadow-lg rounded-md text-gray-700">
+            <button
+              onClick={handleLogout}
+              className="block px-4 py-2 hover:bg-gray-100 w-full text-left"
+            >
+              Log out
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Mobile Only Button */}
+      <div className="flex justify-between items-center mb-6 md:hidden">
+        <div className="flex items-center relative">
+          {/* User Avatar and Profile Dropdown */}
+          <img
+            src={personImage}
+            alt="User Avatar"
+            className="w-10 h-10 rounded-full cursor-pointer"
+            onClick={toggleProfileDropdown}
+          />
+          {showProfileDropdown && (
+            <div className="absolute left-0 top-12 mt-2 w-40 bg-white shadow-lg rounded-md text-gray-700">
+              <button
+                onClick={handleLogout}
+                className="block px-4 py-2 hover:bg-gray-100 w-full text-left"
+              >
+                Log out
+              </button>
+            </div>
+          )}
         </div>
+
         <button
-          onClick={handleViewChatClick} // Added onClick handler to navigate to HealthBot
+          onClick={handlePreviousChats}
           className="bg-[#72BEEE] flex gap-1 text-white text-sm px-4 py-2 rounded-lg md:hidden"
-          aria-label="View saved chat"
         >
           <img src={chatIcon} alt="Chat Icon" className="w-5 h-5" />
           View saved chat
@@ -83,7 +134,7 @@ export default function HealthNews() {
       </div>
 
       {/* Health News Section */}
-      <div className=" grid place-content-center">
+      <div className="grid place-content-center">
         <div className="flex items-center gap-2 mb-4">
           <p
             className="text-white text-lg font-bold pr-3 border-r-2 cursor-pointer"
@@ -102,8 +153,10 @@ export default function HealthNews() {
         {/* News List */}
         <div className="space-y-4">
           {news.map((item) => (
-            <div key={item.id} className="bg-[#72BEEE] max-w-[646px] rounded-2xl p-4">
-              {/* Tag and Views */}
+            <div
+              key={item.id}
+              className="bg-[#72BEEE] max-w-[646px] rounded-2xl p-4"
+            >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="bg-[#F2F2F2] mb-3 text-black text-xs font-bold px-3 py-2 rounded-full">
@@ -111,11 +164,9 @@ export default function HealthNews() {
                   </span>
                   <img src={time} alt="" className="h-[16px] w-10" />
                 </div>
-
                 <button
                   onClick={() => toggleDropdown(item.id)}
                   className="relative text-white"
-                  aria-label="More options"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -133,18 +184,20 @@ export default function HealthNews() {
                   </svg>
                   {dropdownVisible === item.id && (
                     <div className="absolute right-0 mt-2 bg-white text-black rounded-lg shadow-lg w-24">
-                      <button className="block px-4 py-2 text-sm hover:bg-gray-100">Share</button>
+                      <button className="block px-4 py-2 text-sm hover:bg-gray-100">
+                        Share
+                      </button>
                       <div className="w-[80%] h-[1px] bg-black mx-2"></div>
-                      <button className="block px-4 py-2 text-sm hover:bg-gray-100">Remove</button>
+                      <button className="block px-4 py-2 text-sm hover:bg-gray-100">
+                        Remove
+                      </button>
                     </div>
                   )}
                 </button>
               </div>
-
-              {/* Title*/}
-              <p className="text-white text-base font-medium mb-2">{item.title}</p>
-
-              {/* Image */}
+              <p className="text-white text-base font-medium mb-2">
+                {item.title}
+              </p>
               <img
                 src={item.image}
                 alt={item.title}

@@ -10,7 +10,8 @@ import SavedChat from "./pages/savedChat";
 import ExplorePage from "./pages/explorePage";
 import HealthNews from "./pages/healthNews";
 import ForgetPassword from "./pages/forgetPassword";
-import ResetPassword from "./pages/reset-passord";
+import ResetPassword from "./pages/reset-password";
+import ProtectedRoute from "./components/ProtectedRoute"; // Import the ProtectedRoute component
 
 const App = () => {
   return (
@@ -22,7 +23,15 @@ const App = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/verify-email/:email" element={<VerifyEmail />} />
         <Route path="/forgot-password" element={<ForgetPassword />} />
-        <Route path="/app" element={<SavedChat />}>
+        {/* Protect the `/app` route */}
+        <Route
+          path="/app"
+          element={
+            <ProtectedRoute>
+              <SavedChat />
+            </ProtectedRoute>
+          }
+        >
           <Route path="health-tips" element={<GetHealthTips />} />
           <Route path="explore" element={<ExplorePage />} />
           <Route path="health-news" element={<HealthNews />} />
