@@ -1,5 +1,5 @@
 import React, { useState, FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import Robot from "../assets/Graident_Ai_Robot_1-removebg-preview 1.svg";
 import Logo from "../assets/Frame 2.svg";
 import { API_BASE_URL } from "../base_url";
@@ -55,6 +55,12 @@ const Signup: React.FC = () => {
       setErrorMessage(error.message);
     }
   };
+
+
+  const token = localStorage.getItem("healthUserToken");
+  if (token) {
+    return <Navigate to="/app/health-tips" replace />;
+  }
 
   return (
     <div className="flex relative items-center justify-center min-h-screen bg-[#C0D6E4] px-4 md:px-0">

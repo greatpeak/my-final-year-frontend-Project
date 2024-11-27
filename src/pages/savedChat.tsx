@@ -6,10 +6,10 @@ import Time from "../assets/Frame 1000002388.png";
 import person from "../assets/Ellipse 2 (1).svg";
 
 export default function SavedChat() {
-  const navigate = useNavigate(); // useNavigate hook to navigate programmatically
+  const navigate = useNavigate(); 
 
   const handleOpenChat = () => {
-    navigate("/app/health-bot"); // Navigate to the health-bot route
+    navigate("/app/health-bot"); 
   };
 
   return (
@@ -45,7 +45,7 @@ export default function SavedChat() {
                 <img src={person} alt="" />
                 <button
                   className="mt-2 text-white hover:underline text-sm"
-                  onClick={handleOpenChat} // Navigate to health-bot when clicked
+                  onClick={handleOpenChat} 
                 >
                   Open chat
                 </button>

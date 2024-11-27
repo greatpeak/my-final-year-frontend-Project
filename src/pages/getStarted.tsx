@@ -1,8 +1,12 @@
 import Robot from "../assets/Graident_Ai_Robot_1-removebg-preview 1.svg";
 import Logo from "../assets/Frame 1.svg";
-import { NavLink } from "react-router-dom";
+import { Navigate, NavLink } from "react-router-dom";
 
 export default function GetStarted() {
+  const token = localStorage.getItem("healthUserToken");
+  if (token) {
+    return <Navigate to="/app/health-tips" replace />;
+  }
   return (
     <div className="flex items-center justify-center h-screen bg-[#C0D6E4] px-4 md:px-0">
       <div className="text-center space-y-12 md:max-w-[600px] w-full">
