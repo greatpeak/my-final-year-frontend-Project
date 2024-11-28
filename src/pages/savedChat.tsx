@@ -34,7 +34,7 @@ export default function SavedChat() {
         }
 
         const data = await response.json();
-        setChats(data); // Assuming `data` contains the list of chats
+        setChats(data); 
       } catch (error) {
         console.error("Error fetching chats", error);
       }
