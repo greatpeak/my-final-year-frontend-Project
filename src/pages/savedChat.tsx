@@ -43,7 +43,7 @@ export default function SavedChat() {
     fetchChats();
   }, []);
 
-  const handleOpenChat = (chatId) => {
+  const handleOpenChat = (chatId: any) => {
     navigate(`/app/health-bot/${chatId}`); 
   };
 
