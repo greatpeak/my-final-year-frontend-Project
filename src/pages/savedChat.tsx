@@ -36,7 +36,7 @@ export default function SavedChat() {
         }
 
         const data = await response.json();
-        setChats(data); // Assuming the API response matches the given structure
+        setChats(data); 
       } catch (error) {
         console.error("Error fetching chats", error);
       }
@@ -46,7 +46,7 @@ export default function SavedChat() {
   }, []);
 
   const handleOpenChat = (chatId: string) => {
-    navigate(`/app/health-bot/${chatId}`); // Navigate to a specific chat using its ID
+    navigate(`/app/health-bot/${chatId}`); 
   };
 
   const filteredChats = chats.filter((chat) =>
