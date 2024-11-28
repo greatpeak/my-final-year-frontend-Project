@@ -14,7 +14,7 @@ export default function SavedChat() {
 
   useEffect(() => {
     const fetchChats = async () => {
-      const token = localStorage.getItem("skillUserToken");
+      const token = localStorage.getItem("healthUserToken");
       if (!token) {
         console.error("No token found in localStorage");
         return;
