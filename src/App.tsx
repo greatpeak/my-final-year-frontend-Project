@@ -11,7 +11,7 @@ import ExplorePage from "./pages/explorePage";
 import HealthNews from "./pages/healthNews";
 import ForgetPassword from "./pages/forgetPassword";
 import ResetPassword from "./pages/reset-password";
-import ProtectedRoute from "./components/ProtectedRoute"; // Import the ProtectedRoute component
+import ProtectedRoute from "./components/ProtectedRoute"; 
 
 const App = () => {
   return (
