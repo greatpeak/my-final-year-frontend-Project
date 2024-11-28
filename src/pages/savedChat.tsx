@@ -9,7 +9,9 @@ import { API_BASE_URL } from "../base_url";
 
 export default function SavedChat() {
   const navigate = useNavigate();
-  const [chats, setChats] = useState([]);
+  const [chats, setChats] = useState<
+    { id: string; queryText: string; response: string; createdAt: string }[]
+  >([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -34,7 +36,7 @@ export default function SavedChat() {
         }
 
         const data = await response.json();
-        setChats(data); 
+        setChats(data); // Assuming the API response matches the given structure
       } catch (error) {
         console.error("Error fetching chats", error);
       }
@@ -43,24 +45,24 @@ export default function SavedChat() {
     fetchChats();
   }, []);
 
-  const handleOpenChat = (chatId: any) => {
-    navigate(`/app/health-bot/${chatId}`); 
+  const handleOpenChat = (chatId: string) => {
+    navigate(`/app/health-bot/${chatId}`); // Navigate to a specific chat using its ID
   };
 
   const filteredChats = chats.filter((chat) =>
-    chat.message.toLowerCase().includes(searchTerm.toLowerCase())
+    chat.queryText.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div className="flex w-full h-auto">
       {/* Sidebar */}
       <div className="hidden lg:flex w-1/4 bg-[#C0D6E4] flex-col p-4 border-r-2">
-        <img src={Logo} className="w-[149px] h-[36px] mb-3" alt="" />
+        <img src={Logo} className="w-[149px] h-[36px] mb-3" alt="Logo" />
         <h6 className="text-white mb-3">Saved Chat</h6>
         <div className="relative">
           <img
             src={search}
-            alt=""
+            alt="Search Icon"
             className="absolute left-2 top-3 text-gray-300"
           />
           <input
@@ -79,15 +81,16 @@ export default function SavedChat() {
             >
               <div className="flex justify-between mb-3">
                 <button>
-                  <img src={Time} alt="" />
+                  <img src={Time} alt="Time Icon" />
                 </button>
                 <button>
-                  <img src={Delete} alt="" />
+                  <img src={Delete} alt="Delete Icon" />
                 </button>
               </div>
-              <p className="text-sm text-white truncate">{chat.message}</p>
-              <div className="algin-left flex align-middle mt-2 gap-2 items-center">
-                <img src={person} alt="" />
+              <p className="text-sm text-white font-medium">{chat.queryText}</p>
+              <p className="text-xs text-white truncate">{chat.response}</p>
+              <div className="align-left flex align-middle mt-2 gap-2 items-center">
+                <img src={person} alt="Person Icon" />
                 <button
                   className="mt-2 text-white hover:underline text-sm"
                   onClick={() => handleOpenChat(chat.id)}
