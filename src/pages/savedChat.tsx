@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import Logo from "../assets/Frame 1.svg";
 import search from "../assets/search.svg";
 import Delete from "../assets/Trash.svg";
-import Time from "../assets/Frame 1000002388.png";
 import person from "../assets/Ellipse 2 (1).svg";
 import { API_BASE_URL } from "../base_url";
+import { useChatStore } from "../zustand";
 
 interface Chat {
   id: string;
@@ -16,6 +16,7 @@ interface Chat {
 
 export default function SavedChat() {
   const navigate = useNavigate();
+  const { bears, empty } = useChatStore((state: any) => state);
   const [chats, setChats] = useState<Chat[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -69,6 +70,25 @@ export default function SavedChat() {
     fetchChats();
   }, []);
 
+  useEffect(() => {
+    const sortedChats = Array.isArray(bears)
+      ? bears.sort(
+          (a: Chat, b: Chat) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+      : [];
+
+    // Remove duplicates based on the chat `id`
+    const uniqueChats = sortedChats.filter(
+      (chat, index, self) => index === self.findIndex((c) => c.id === chat.id)
+    );
+
+    setChats((prev) => [...prev, ...uniqueChats]);
+    if (bears.length > 1) {
+      empty();
+    }
+  }, [bears]);
+
   const filteredChats = chats.filter((chat) =>
     chat.queryText.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -80,6 +100,18 @@ export default function SavedChat() {
   const handleOpenChat = (chatId: string) => {
     navigate(`/app/health-bot/${chatId}`);
   };
+
+  const formatTime = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const options: Intl.DateTimeFormatOptions = {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true, 
+    };
+
+    return date.toLocaleString("en-US", options); 
+  };
+
 
   return (
     <div className="flex w-full h-auto">
@@ -118,7 +150,10 @@ export default function SavedChat() {
             >
               <div className="flex justify-between mb-3">
                 <button>
-                  <img src={Time} alt="Time Icon" />
+                  {" "}
+                  <span className="text-xs text-white">
+                    {formatTime(chat.createdAt)}
+                  </span>
                 </button>
                 <button>
                   <img src={Delete} alt="Delete Icon" />

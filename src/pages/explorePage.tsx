@@ -6,12 +6,63 @@ import cancer from "../assets/icon-park-outline_cancer.svg";
 import diabetes from "../assets/healthicons_diabetes-measure-outline.svg";
 import malaria from "../assets/healthicons_malaria-pf-microscope-outline.svg";
 import { useState } from "react";
+import { API_BASE_URL } from "../base_url";
+import { useChatStore } from "../zustand";
+
 
 
 export default function ExplorePage() {
   const navigate = useNavigate();
     const [showDropdown, setShowDropdown] = useState(false);
+      const [loading, setLoading] = useState(false);
       const [message, setMessage] = useState<string>("");
+      const add = useChatStore((state: any) => state.add);
+
+        const sendMessageToChatScreen = async () => {
+          if (message.trim() === "") {
+            return;
+          }
+          setLoading(true);
+          const token = localStorage.getItem("healthUserToken");
+          const userId = localStorage.getItem("healthUserId");
+          if (!token || !userId) {
+            console.error("Missing token or user ID. Redirect to login.");
+            return;
+          }
+          try {
+            const response = await fetch(`${API_BASE_URL}/prompt`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                authId: userId,
+                queryText: message,
+                queryId: "no-queryId",
+              }),
+            });
+            if (!response.ok) {
+              console.error(`API Error: ${response.statusText}`);
+              return;
+            }
+            const data = await response.json();
+            setMessage("");
+            setLoading(false);
+            if (data?.type === "newChat") {
+              add({
+                queryText: data?.data?.query.queryText,
+                response: data?.data?.query.response,
+                id: data?.data?.query?.id,
+                createdAt: data?.data?.query?.createdAt,
+              });
+              navigate("/app/health-bot/" + data?.data?.query?.id);
+            }
+          } catch (error) {
+            console.error("Error sending message:", error);
+            setLoading(false);
+          }
+        };
 
 
   const toggleDropdown = () => {
@@ -135,7 +186,7 @@ export default function ExplorePage() {
           />
           {showDropdown && (
             <div className="absolute left-0 top-12 mt-2 w-40 bg-white shadow-lg rounded-md text-gray-700">
-              <button 
+              <button
                 onClick={handleLogout}
                 className="block px-4 py-2 hover:bg-gray-100 w-full text-left"
               >
@@ -190,11 +241,16 @@ export default function ExplorePage() {
       <div className="fixed bottom-6 right-0 w-full max-w-[761px] flex items-center p-3 md:bottom-6 md:right-14">
         <input
           type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
           placeholder="Type message"
           className="flex-grow relative p-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm md:text-base"
         />
-        <button className="absolute right-6 md:right-4">
-          <img src={send} alt="Send" className="w-6 h-6" />
+        <button
+          className="absolute right-6 md:right-4 text-blue-600"
+          onClick={sendMessageToChatScreen}
+        >
+          {loading ? "...." : <img src={send} alt="Send" className="w-6 h-6" />}
         </button>
       </div>
     </div>
