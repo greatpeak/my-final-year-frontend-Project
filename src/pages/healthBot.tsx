@@ -1,11 +1,13 @@
-import { useState, ChangeEvent } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useState, useEffect, ChangeEvent, useRef } from "react";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import personImage from "../assets/Ellipse 2 (1).svg";
 import send from "../assets/Send.svg";
 import robotImage from "../assets/Graident_Ai_Robot_1-removebg-preview 1.svg";
 import arrow from "../assets/Arrow-Left.svg";
 import menu from "../assets/Menu-Alt-2.svg";
 import { API_BASE_URL } from "../base_url";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Message {
   sender: "user" | "bot";
@@ -14,14 +16,58 @@ interface Message {
 
 export default function HealthBot() {
   const navigate = useNavigate();
+  const { chatId } = useParams<{ chatId: string }>();
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [queryId, setQueryId] = useState<string>("no-queryId");
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+useEffect(() => {
+  const fetchPreviousMessages = async () => {
+    if (!chatId) return;
+
+    const token = localStorage.getItem("healthUserToken");
+    if (!token) {
+      console.error("Missing token. Redirect to login.");
+      return;
+    }
+    try {
+      const response = await fetch(`${API_BASE_URL}/histories/${chatId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch chat history: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const previousMessages = data.data.children
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .map((msg: any) => {
+          const messages: Message[] = [];
+          if (msg.createdAt) {
+            messages.push({ sender: "user", text: msg.queryText });
+            messages.push({ sender: "bot", text: msg.response });
+          }
+          return messages;
+        })
+        .flat();
+
+      setMessages(previousMessages);
+    } catch (error) {
+      console.error("Error fetching previous messages:", error);
+    }
+  };
+
+  fetchPreviousMessages();
+}, [chatId]);
 
   const handleGoBack = () => {
     navigate(-1);
   };
+
   const toggleDropdown = () => {
     setShowDropdown((prev) => !prev);
   };
@@ -56,7 +102,12 @@ export default function HealthBot() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ userId, queryText: message, authId: healthUserId, queryId }),
+        body: JSON.stringify({
+          userId,
+          queryText: message,
+          authId: healthUserId,
+          queryId,
+        }),
       });
       const data = await response.json();
       const type = data["type"];
@@ -78,17 +129,24 @@ export default function HealthBot() {
         ]);
         setQueryId(resMsg.queryId);
       }
-      setMessage("")
+      setMessage("");
       console.log("Response:", data["data"], data["type"]);
     } catch (error) {
       console.error("Error sending message:", error);
-      setMessages((prev) => [...prev, { sender: "bot", text: "Sorry, something went wrong." }]);
+      setMessages((prev) => [
+        ...prev,
+        { sender: "bot", text: "Sorry, something went wrong." },
+      ]);
     }
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
   };
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#C0D6E4]">
@@ -99,7 +157,9 @@ export default function HealthBot() {
           className="w-10 h-10 rounded-full cursor-pointer"
           onClick={toggleDropdown}
         />
-        <p className="ml-3 text-sm text-white font-semibold hidden md:block">johndoe@gmail.com</p>
+        <p className="ml-3 text-sm text-white font-semibold hidden md:block">
+          johndoe@gmail.com
+        </p>
         {showDropdown && (
           <div className="absolute right-6 top-8 mt-2 w-40 bg-white shadow-lg rounded-md text-gray-700">
             <button
@@ -125,7 +185,9 @@ export default function HealthBot() {
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`flex items-start space-x-3 ${msg.sender === "user" ? "justify-end" : ""}`}
+            className={`flex items-start space-x-3 ${
+              msg.sender === "user" ? "justify-end" : ""
+            }`}
           >
             {msg.sender === "bot" ? (
               <img src={robotImage} alt="" className="h-[24px] w-[20px]" />
@@ -137,10 +199,18 @@ export default function HealthBot() {
                 msg.sender === "user" ? "bg-[#72BEEE] text-white" : "bg-white"
               } max-w-[80%] break-words`}
             >
-              <p className="text-sm md:text-base">{msg.text}</p>
+              <ReactMarkdown
+                className="text-sm md:text-base"
+                remarkPlugins={[remarkGfm]}
+              >
+                {msg.text}
+              </ReactMarkdown>
             </div>
           </div>
         ))}
+        <div className="h-[10vh]" />
+        {/* Scroll to bottom anchor */}
+        <div ref={messagesEndRef} />
       </div>
 
       <div className="fixed bottom-6 right-0 w-full max-w-[761px] flex items-center p-3 md:bottom-6 md:right-14">

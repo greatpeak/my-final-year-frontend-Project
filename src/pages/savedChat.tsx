@@ -7,27 +7,37 @@ import Time from "../assets/Frame 1000002388.png";
 import person from "../assets/Ellipse 2 (1).svg";
 import { API_BASE_URL } from "../base_url";
 
+interface Chat {
+  id: string;
+  queryText: string;
+  response: string;
+  createdAt: string;
+}
+
 export default function SavedChat() {
   const navigate = useNavigate();
-  const [chats, setChats] = useState<
-    { id: string; queryText: string; response: string; createdAt: string }[]
-  >([]);
+  const [chats, setChats] = useState<Chat[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchChats = async () => {
       const token = localStorage.getItem("healthUserToken");
+      const userId = localStorage.getItem("healthUserId");
+
       if (!token) {
         console.error("No token found in localStorage");
         return;
       }
 
       try {
-        const response = await fetch(`${API_BASE_URL}/histories`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          `${API_BASE_URL}/histories/users/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!response.ok) {
           throw new Error(
@@ -35,8 +45,22 @@ export default function SavedChat() {
           );
         }
 
-        const data = await response.json();
-        setChats(data); 
+        const { data } = await response.json();
+
+        const sortedChats = Array.isArray(data)
+          ? data.sort(
+              (a: Chat, b: Chat) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+            )
+          : [];
+
+        const uniqueChats = sortedChats.filter(
+          (chat, index, self) =>
+            index === self.findIndex((c) => c.id === chat.id)
+        );
+
+        setChats(uniqueChats);
       } catch (error) {
         console.error("Error fetching chats", error);
       }
@@ -45,13 +69,13 @@ export default function SavedChat() {
     fetchChats();
   }, []);
 
-  const handleOpenChat = (chatId: string) => {
-    navigate(`/app/health-bot/${chatId}`); 
-  };
-
   const filteredChats = chats.filter((chat) =>
     chat.queryText.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleOpenChat = (chatId: string) => {
+    navigate(`/app/health-bot/${chatId}`);
+  };
 
   return (
     <div className="flex w-full h-auto">

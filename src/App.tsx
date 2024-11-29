@@ -35,7 +35,7 @@ const App = () => {
           <Route path="health-tips" element={<GetHealthTips />} />
           <Route path="explore" element={<ExplorePage />} />
           <Route path="health-news" element={<HealthNews />} />
-          <Route path="health-bot/:id" element={<HealthBot />} />
+          <Route path="health-bot/:chatId" element={<HealthBot />} />
           <Route path="mobileSavedChat" element={<MobileSavedChat />} />
         </Route>
       </Routes>
