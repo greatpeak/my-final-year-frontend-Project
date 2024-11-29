@@ -181,7 +181,10 @@ useEffect(() => {
         </button>
       </div>
 
-      <div className="flex-grow p-4 space-y-4 overflow-y-auto max-h-[calc(100vh-120px)]">
+      <div
+        className="flex-grow p-4 space-y-4 overflow-y-auto max-h-[calc(100vh-120px)] scrollbar-hide"
+        style={{ overflowY: "scroll", scrollbarWidth: "none" }}
+      >
         {messages.map((msg, index) => (
           <div
             key={index}

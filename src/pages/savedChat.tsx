@@ -73,6 +73,10 @@ export default function SavedChat() {
     chat.queryText.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleHomePage = () => {
+    navigate("/app/health-tips");
+  };
+
   const handleOpenChat = (chatId: string) => {
     navigate(`/app/health-bot/${chatId}`);
   };
@@ -80,8 +84,13 @@ export default function SavedChat() {
   return (
     <div className="flex w-full h-auto">
       {/* Sidebar */}
-      <div className="hidden lg:flex w-1/4 bg-[#C0D6E4] flex-col p-4 border-r-2">
-        <img src={Logo} className="w-[149px] h-[36px] mb-3" alt="Logo" />
+      <div className="hidden lg:flex w-1/4 bg-[#C0D6E4] flex-col p-4 border-r-2 ">
+        <img
+          src={Logo}
+          onClick={handleHomePage}
+          className="w-[149px] h-[36px] mb-3 cursor-pointer"
+          alt="Logo"
+        />
         <h6 className="text-white mb-3">Saved Chat</h6>
         <div className="relative">
           <img
@@ -98,7 +107,10 @@ export default function SavedChat() {
           />
         </div>
         {/* Message List with Scrolling */}
-        <div className="mt-4 flex-grow overflow-y-auto space-y-4 h-[calc(100vh-150px)]">
+        <div
+          className="mt-4 flex-grow overflow-y-auto space-y-4 h-[calc(100vh-150px)]"
+          style={{ overflowY: "scroll", scrollbarWidth: "none" }}
+        >
           {filteredChats.map((chat) => (
             <div
               key={chat.id}
