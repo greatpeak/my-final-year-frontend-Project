@@ -11,6 +11,8 @@ import { useState } from "react";
 export default function ExplorePage() {
   const navigate = useNavigate();
     const [showDropdown, setShowDropdown] = useState(false);
+      const [message, setMessage] = useState<string>("");
+
 
   const toggleDropdown = () => {
     setShowDropdown((prev) => !prev);

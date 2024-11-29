@@ -11,7 +11,7 @@ import ExplorePage from "./pages/explorePage";
 import HealthNews from "./pages/healthNews";
 import ForgetPassword from "./pages/forgetPassword";
 import ResetPassword from "./pages/reset-password";
-import ProtectedRoute from "./components/ProtectedRoute"; // Import the ProtectedRoute component
+import ProtectedRoute from "./components/ProtectedRoute"; 
 
 const App = () => {
   return (
@@ -35,7 +35,7 @@ const App = () => {
           <Route path="health-tips" element={<GetHealthTips />} />
           <Route path="explore" element={<ExplorePage />} />
           <Route path="health-news" element={<HealthNews />} />
-          <Route path="health-bot" element={<HealthBot />} />
+          <Route path="health-bot/:chatId" element={<HealthBot />} />
           <Route path="mobileSavedChat" element={<MobileSavedChat />} />
         </Route>
       </Routes>
