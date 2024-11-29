@@ -97,7 +97,8 @@ export default function SavedChat() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="mt-4 flex-grow space-y-4">
+        {/* Message List with Scrolling */}
+        <div className="mt-4 flex-grow overflow-y-auto space-y-4 h-[calc(100vh-150px)]">
           {filteredChats.map((chat) => (
             <div
               key={chat.id}
