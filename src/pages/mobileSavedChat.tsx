@@ -73,16 +73,25 @@ export default function MobileSavedChat() {
   );
 
   const handleGoBack = () => {
-    navigate(-1); 
+    navigate(-1);
   };
 
   const handleOpenChat = (chatId: string) => {
-    navigate(`/app/health-bot/${chatId}`); 
+    navigate(`/app/health-bot/${chatId}`);
   };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleString(); 
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: "short", 
+      year: "numeric", 
+      month: "short", 
+      day: "numeric", 
+      hour: "numeric", 
+      minute: "numeric",
+      hour12: true, 
+    };
+    return date.toLocaleString(undefined, options);
   };
 
   return (
