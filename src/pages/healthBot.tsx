@@ -149,7 +149,7 @@ useEffect(() => {
   }, [messages]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#C0D6E4]">
+    <div className="min-h-screen flex flex-col  bg-[#C0D6E4]">
       <div className="hidden md:flex justify-end mt-3 mr-2">
         <img
           src={personImage}
@@ -181,7 +181,7 @@ useEffect(() => {
         </button>
       </div>
 
-      <div className="flex-grow p-4 space-y-4">
+      <div className="flex-grow p-4 space-y-4 overflow-y-auto max-h-[calc(100vh-120px)]">
         {messages.map((msg, index) => (
           <div
             key={index}
