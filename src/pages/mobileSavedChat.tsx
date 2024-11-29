@@ -6,7 +6,6 @@ import arrow from "../assets/Vector.svg";
 import personIcon from "../assets/Ellipse 2 (1).svg";
 import { API_BASE_URL } from "../base_url";
 
-// Define the Chat interface
 interface Chat {
   id: string;
   queryText: string;
@@ -74,17 +73,16 @@ export default function MobileSavedChat() {
   );
 
   const handleGoBack = () => {
-    navigate(-1); // Go back to the previous page
+    navigate(-1); 
   };
 
   const handleOpenChat = (chatId: string) => {
-    navigate(`/app/health-bot/${chatId}`); // Navigate to health-bot page
+    navigate(`/app/health-bot/${chatId}`); 
   };
 
-  // Format the date and time
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleString(); // This will display the full date and time in the user's locale
+    return date.toLocaleString(); 
   };
 
   return (
@@ -119,7 +117,6 @@ export default function MobileSavedChat() {
           <div key={chat.id} className="bg-[#72BEEE] p-4 rounded-2xl shadow-sm">
             {/* Top Section */}
             <div className="flex justify-between items-center mb-3">
-              {/* Display formatted date and time */}
               <span className="text-xs text-white">
                 {formatDate(chat.createdAt)}
               </span>
