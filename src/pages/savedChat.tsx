@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Logo from "../assets/Frame 1.svg";
@@ -69,8 +70,6 @@ export default function SavedChat() {
           (a: Chat, b: Chat) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         )
       : [];
-
-    // Remove duplicates based on the chat `id`
     const uniqueChats = sortedChats.filter(
       (chat, index, self) => index === self.findIndex((c) => c.id === chat.id)
     );

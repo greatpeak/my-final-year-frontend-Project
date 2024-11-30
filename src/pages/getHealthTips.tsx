@@ -1,24 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import personImage from "../assets/Ellipse 2 (1).svg";
 import chat from "../assets/tdesign_chat-bubble-history-filled.svg";
 import circle from "../assets/Ellipse 2.svg";
 import send from "../assets/Send.svg";
-import messageIcon from "../assets/tabler_message-filled.svg"
+import messageIcon from "../assets/tabler_message-filled.svg";
 import circle2 from "../assets/Ellipse 11.svg";
-import cancer from "../assets/icon-park-outline_cancer.svg";
-import diabetes from "../assets/healthicons_diabetes-measure-outline.svg";
-import malaria from "../assets/healthicons_malaria-pf-microscope-outline.svg";
 import { API_BASE_URL } from "../base_url";
 import { useChatStore } from "../zustand";
+import { topics } from "../data";
+import HealthDataModal from "./health_data_modal";
+import HealthStatusViewer from "./health_status_viewer";
 
 export default function GetHealthTips() {
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string>("");
   const add = useChatStore((state: any) => state.add);
+
+  const [showViewer, setShowViewer] = useState(false);
+
+  const handleViewHealthStatus = () => setShowViewer(true);
 
   const toggleDropdown = () => {
     setShowDropdown((prev) => !prev);
@@ -36,6 +41,15 @@ export default function GetHealthTips() {
       return;
     }
     try {
+      const userHealthData = localStorage.getItem("userHealthData");
+      // Show modal if health data is missing
+      if (!userHealthData || userHealthData.trim() === "{}") {
+        setLoading(false);
+        setIsModalOpen(true);
+        return;
+      }
+
+      const healthInfo = userHealthData ? JSON.parse(userHealthData) : {};
       const response = await fetch(`${API_BASE_URL}/prompt`, {
         method: "POST",
         headers: {
@@ -44,7 +58,9 @@ export default function GetHealthTips() {
         },
         body: JSON.stringify({
           authId: userId,
-          queryText: message,
+          queryText: `User Health Information: ${JSON.stringify(
+            healthInfo
+          )}\nUsing the above user health information, respond to the following query: ${message}`,
           queryId: "no-queryId",
         }),
       });
@@ -70,6 +86,60 @@ export default function GetHealthTips() {
     }
   };
 
+  const sendExploreMessageToChatScreen = async (title: string) => {
+    const message = `${title}`;
+    setLoading(true);
+    const token = localStorage.getItem("healthUserToken");
+    const userId = localStorage.getItem("healthUserId");
+    if (!token || !userId) {
+      console.error("Missing token or user ID. Redirect to login.");
+      return;
+    }
+    try {
+      const userHealthData = localStorage.getItem("userHealthData");
+      // Show modal if health data is missing
+      if (!userHealthData || userHealthData.trim() === "{}") {
+        setLoading(false);
+        setIsModalOpen(true);
+        return;
+      }
+
+      const healthInfo = userHealthData ? JSON.parse(userHealthData) : {};
+      const response = await fetch(`${API_BASE_URL}/prompt`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          authId: userId,
+          queryText: `User Health Information: ${JSON.stringify(
+            healthInfo
+          )}\nUsing the above user health information, respond to the following query: ${message}`,
+          queryId: "no-queryId",
+        }),
+      });
+      if (!response.ok) {
+        console.error(`API Error: ${response.statusText}`);
+        return;
+      }
+      const data = await response.json();
+      setMessage("");
+      setLoading(false);
+      if (data?.type === "newChat") {
+        add({
+          queryText: data?.data?.query.queryText,
+          response: data?.data?.query.response,
+          id: data?.data?.query?.id,
+          createdAt: data?.data?.query?.createdAt,
+        });
+        navigate("/app/health-bot/" + data?.data?.query?.id);
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+      setLoading(false);
+    }
+  };
   const handlePreviousChats = () => {
     navigate("/app/mobileSavedChat");
     setShowDropdown(false);
@@ -85,71 +155,19 @@ export default function GetHealthTips() {
     }
   };
 
-  const topics = [
-    {
-      img: cancer,
-      name: "Cancer",
-      description: "Know more about cancer, symptoms and effects.",
-    },
-    {
-      img: diabetes,
-      name: "Diabetes",
-      description: "Know the stages of diabetes, causes and effects.",
-    },
-    {
-      img: malaria,
-      name: "Aids",
-      description: "Difference between AIDS and HIV.",
-    },
-    {
-      img: malaria,
-      name: "Malaria",
-      description: "Fast treatment, prevention, and control.",
-    },
-    {
-      img: cancer,
-      name: "Tuberculosis",
-      description: "Symptoms, prevention, and treatment of tuberculosis.",
-    },
-    {
-      img: diabetes,
-      name: "Heart Disease",
-      description: "Learn about heart disease, risk factors, and prevention.",
-    },
-    {
-      img: malaria,
-      name: "Asthma",
-      description: "Symptoms, triggers, and management of asthma.",
-    },
-    {
-      img: cancer,
-      name: "Obesity",
-      description: "Understanding obesity and how to manage it effectively.",
-    },
-    {
-      img: diabetes,
-      name: "Stroke",
-      description: "Early signs, risk factors, and treatments for stroke.",
-    },
-    {
-      img: malaria,
-      name: "Arthritis",
-      description: "Types, causes, and treatments for arthritis.",
-    },
-    {
-      img: cancer,
-      name: "Depression",
-      description: "Recognizing depression and how to seek help.",
-    },
-    {
-      img: diabetes,
-      name: "Hepatitis",
-      description: "Learn about different types of hepatitis and prevention.",
-    },
-  ];
+  useEffect(() => {
+    const storedData = localStorage.getItem("userHealthData");
+    if (!storedData) {
+      setIsModalOpen(true);
+    }
+  }, []);
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   const handleExploreClick = () => {
-    navigate("/app/explore");
+    navigate("/app/health-tips");
   };
 
   const handleHealthNewsClick = () => {
@@ -175,9 +193,22 @@ export default function GetHealthTips() {
           <div className="absolute right-12 top-14 mt-2 w-40 bg-white shadow-lg rounded-md text-gray-700">
             <button
               onClick={handleLogout}
-              className="block px-4 py-2 hover:bg-gray-100 w-full text-left"
+              className="block px-4 py-2 hover:bg-gray-100 w-full text-left text-xs"
             >
               Log out
+            </button>
+            <button
+              onClick={handleViewHealthStatus}
+              className="block px-4 py-2 hover:bg-gray-100 w-full text-left text-xs"
+            >
+              View Health Status
+            </button>
+
+            <button
+              onClick={handleViewHealthStatus}
+              className="block px-4 py-2 hover:bg-gray-100 w-full text-left text-xs"
+            >
+              Update Health Status
             </button>
           </div>
         )}
@@ -195,9 +226,26 @@ export default function GetHealthTips() {
           />
           {showDropdown && (
             <div className="absolute left-0 top-12 mt-2 w-40 bg-white shadow-lg rounded-md text-gray-700">
+              {/* View Health Status */}
+              <button
+                onClick={handleViewHealthStatus}
+                className="block px-4 py-2 hover:bg-gray-100 w-full text-left text-xs"
+              >
+                View Health Status
+              </button>
+
+              {/* Change Health Status */}
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="block px-4 py-2 hover:bg-gray-100 w-full text-left text-xs"
+              >
+                Update Health Status
+              </button>
+
+              {/* Log Out */}
               <button
                 onClick={handleLogout}
-                className="block px-4 py-2 hover:bg-gray-100 w-full text-left"
+                className="block px-4 py-2 hover:bg-gray-100 w-full text-left text-xs"
               >
                 Log out
               </button>
@@ -254,7 +302,11 @@ export default function GetHealthTips() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {topics.map((topic, index) => (
-            <div key={index} className="bg-[#72BEEE] text-white p-4 rounded-lg shadow-lg">
+            <div
+              key={index}
+              className="bg-[#72BEEE] text-white p-4 rounded-lg shadow-lg"
+              onClick={() => sendExploreMessageToChatScreen(topic.name)}
+            >
               <img src={topic.img} alt="" className="h-[24px] w-[24px]" />
               <p className="text-lg font-semibold">{topic.name}</p>
               <p className="text-sm">{topic.description}</p>
@@ -278,6 +330,8 @@ export default function GetHealthTips() {
           {loading ? "...." : <img src={send} alt="Send" className="w-6 h-6" />}
         </button>
       </div>
+      {isModalOpen && <HealthDataModal onClose={handleCloseModal} />}
+      {showViewer && <HealthStatusViewer onClose={() => setShowViewer(false)} />}
     </div>
   );
 }

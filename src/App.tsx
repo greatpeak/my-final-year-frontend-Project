@@ -7,7 +7,6 @@ import Signup from "./pages/signUp";
 import HealthBot from "./pages/healthBot";
 import VerifyEmail from "./pages/verify-email";
 import SavedChat from "./pages/savedChat";
-import ExplorePage from "./pages/explorePage";
 import HealthNews from "./pages/healthNews";
 import ForgetPassword from "./pages/forgetPassword";
 import ResetPassword from "./pages/reset-password";
@@ -33,7 +32,6 @@ const App = () => {
           }
         >
           <Route path="health-tips" element={<GetHealthTips />} />
-          <Route path="explore" element={<ExplorePage />} />
           <Route path="health-news" element={<HealthNews />} />
           <Route path="health-bot/:chatId" element={<HealthBot />} />
           <Route path="mobileSavedChat" element={<MobileSavedChat />} />

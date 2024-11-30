@@ -36,7 +36,7 @@ const news: NewsItem[] = [
     time: "5 hours ago",
     title:
       "WHO launches campaign targeting malnutrition in Asia, Africa, and the Caribbean with innovative solutions.",
-    image: sampleImage, // Replace with another unique image URL
+    image: sampleImage,
   },
   {
     id: 3,
@@ -89,7 +89,7 @@ const news: NewsItem[] = [
   };
 
   const handleExploreClick = () => {
-    navigate("/app/explore");
+    navigate("/app/health-tips");
   };
 
   const handleHealthNewsClick = () => {
