@@ -31,19 +31,14 @@ export default function SavedChat() {
       }
 
       try {
-        const response = await fetch(
-          `${API_BASE_URL}/histories/users/${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}/histories/users/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
-          throw new Error(
-            `Failed to fetch: ${response.status} ${response.statusText}`
-          );
+          throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
         }
 
         const { data } = await response.json();
@@ -51,14 +46,12 @@ export default function SavedChat() {
         const sortedChats = Array.isArray(data)
           ? data.sort(
               (a: Chat, b: Chat) =>
-                new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime()
+                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
             )
           : [];
 
         const uniqueChats = sortedChats.filter(
-          (chat, index, self) =>
-            index === self.findIndex((c) => c.id === chat.id)
+          (chat, index, self) => index === self.findIndex((c) => c.id === chat.id)
         );
 
         setChats(uniqueChats);
@@ -73,8 +66,7 @@ export default function SavedChat() {
   useEffect(() => {
     const sortedChats = Array.isArray(bears)
       ? bears.sort(
-          (a: Chat, b: Chat) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          (a: Chat, b: Chat) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         )
       : [];
 
@@ -106,54 +98,49 @@ export default function SavedChat() {
     const options: Intl.DateTimeFormatOptions = {
       hour: "2-digit",
       minute: "2-digit",
-      hour12: true, 
+      hour12: true,
     };
 
-    return date.toLocaleString("en-US", options); 
+    return date.toLocaleString("en-US", options);
   };
 
-
   return (
-    <div className="flex w-full h-auto">
+    <div className="flex">
       {/* Sidebar */}
-      <div className="hidden lg:flex w-1/4 bg-[#C0D6E4] flex-col p-4 border-r-2 ">
-        <img
-          src={Logo}
-          onClick={handleHomePage}
-          className="w-[149px] h-[36px] mb-3 cursor-pointer"
-          alt="Logo"
-        />
-        <h6 className="text-white mb-3">Saved Chat</h6>
-        <div className="relative">
+      <div
+        className="hidden lg:flex flex-col p-4 border-r-2 bg-[#C0D6E4]"
+        style={{
+          position: "fixed",
+          width: "25%",
+          height: "100vh",
+          overflowY: "auto",
+        }}
+      >
+        <div className="sticky ">
           <img
-            src={search}
-            alt="Search Icon"
-            className="absolute left-2 top-3 text-gray-300"
+            src={Logo}
+            onClick={handleHomePage}
+            className="w-[149px] h-[36px] mb-3 cursor-pointer"
+            alt="Logo"
           />
-          <input
-            type="text"
-            placeholder="Search for message"
-            className="w-full px-7 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+          <h6 className="text-white mb-3">Saved Chat</h6>
+          <div className="relative">
+            <img src={search} alt="Search Icon" className="absolute left-2 top-3 text-gray-300" />
+            <input
+              type="text"
+              placeholder="Search for message"
+              className="w-full px-7 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
-        {/* Message List with Scrolling */}
-        <div
-          className="mt-4 flex-grow overflow-y-auto space-y-4 h-[calc(100vh-150px)]"
-          style={{ overflowY: "scroll", scrollbarWidth: "none" }}
-        >
+        <div className="mt-4 space-y-4">
           {filteredChats.map((chat) => (
-            <div
-              key={chat.id}
-              className="bg-[#72BEEE] p-3 rounded-2xl shadow-sm flex flex-col"
-            >
+            <div key={chat.id} className="bg-[#72BEEE] p-3 rounded-2xl shadow-sm flex flex-col">
               <div className="flex justify-between mb-3">
                 <button>
-                  {" "}
-                  <span className="text-xs text-white">
-                    {formatTime(chat.createdAt)}
-                  </span>
+                  <span className="text-xs text-white">{formatTime(chat.createdAt)}</span>
                 </button>
                 <button>
                   <img src={Delete} alt="Delete Icon" />
@@ -176,7 +163,12 @@ export default function SavedChat() {
       </div>
 
       {/* Main Content Area */}
-      <div className="w-full lg:w-3/4">
+      <div
+        className="w-full"
+        style={{
+          marginLeft: "25%", // Match the width of the sidebar
+        }}
+      >
         <Outlet />
       </div>
     </div>

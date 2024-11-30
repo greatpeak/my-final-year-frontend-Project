@@ -157,9 +157,7 @@ useEffect(() => {
           className="w-10 h-10 rounded-full cursor-pointer"
           onClick={toggleDropdown}
         />
-        <p className="ml-3 text-sm text-white font-semibold hidden md:block">
-          johndoe@gmail.com
-        </p>
+        <p className="ml-3 text-sm text-white font-semibold hidden md:block">johndoe@gmail.com</p>
         {showDropdown && (
           <div className="absolute right-6 top-8 mt-2 w-40 bg-white shadow-lg rounded-md text-gray-700">
             <button
@@ -188,9 +186,7 @@ useEffect(() => {
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`flex items-start space-x-3 ${
-              msg.sender === "user" ? "justify-end" : ""
-            }`}
+            className={`flex items-start space-x-3 ${msg.sender === "user" ? "justify-end" : ""}`}
           >
             {msg.sender === "bot" ? (
               <img src={robotImage} alt="" className="h-[24px] w-[20px]" />
@@ -202,10 +198,7 @@ useEffect(() => {
                 msg.sender === "user" ? "bg-[#72BEEE] text-white" : "bg-white"
               } max-w-[80%] break-words`}
             >
-              <ReactMarkdown
-                className="text-sm md:text-base"
-                remarkPlugins={[remarkGfm]}
-              >
+              <ReactMarkdown className="text-sm md:text-base" remarkPlugins={[remarkGfm]}>
                 {msg.text}
               </ReactMarkdown>
             </div>
@@ -221,7 +214,7 @@ useEffect(() => {
           type="text"
           value={message}
           onChange={handleInputChange}
-          placeholder="Type message"
+          placeholder="Ask your personalized AI anything"
           className="flex-grow relative p-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm md:text-base"
         />
         <button className="absolute right-6 md:right-4" onClick={sendMessage}>

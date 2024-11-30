@@ -1,15 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import personImage from "../assets/Ellipse 2 (1).svg";
-import send from "../assets/Send.svg";
 import chatIcon from "../assets/tdesign_chat-bubble-history-filled.svg";
 import sampleImage from "../assets/Scene of construction site with equipment.svg";
 import time from "../assets/Frame 1000002388.png";
-import { API_BASE_URL } from "../base_url";
-import { useChatStore } from "../zustand";
 
 
-// Define TypeScript types for the news items
+
 interface NewsItem {
   id: number;
   tag: string;
@@ -22,83 +19,51 @@ export default function HealthNews() {
   const navigate = useNavigate();
   const [dropdownVisible, setDropdownVisible] = useState<number | null>(null);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState<string>("");
-    const add = useChatStore((state: any) => state.add);
 
 
-  const news: NewsItem[] = [
-    {
-      id: 1,
-      tag: "News",
-      time: time,
-      title:
-        "Unicef to start building health centers in major west African countries",
-      image: sampleImage,
-    },
-    {
-      id: 2,
-      tag: "News",
-      time: time,
-      title:
-        "WHO kickstarts campaign against malnutrition in Asia, Africa, and the Dominican Republic.",
-      image: sampleImage,
-    },
-    {
-      id: 3,
-      tag: "News",
-      time: time,
-      title:
-        "Donald Trump fight against rabies in the United States takes a drastic step due to new regulations.",
-      image: sampleImage,
-    },
-  ];
+const news: NewsItem[] = [
+  {
+    id: 1,
+    tag: "Global Health",
+    time: "2 hours ago",
+    title:
+      "Unicef initiates health infrastructure projects across West Africa to improve access to healthcare.",
+    image: sampleImage, // Replace with a unique image URL for realism
+  },
+  {
+    id: 2,
+    tag: "Nutrition",
+    time: "5 hours ago",
+    title:
+      "WHO launches campaign targeting malnutrition in Asia, Africa, and the Caribbean with innovative solutions.",
+    image: sampleImage, // Replace with another unique image URL
+  },
+  {
+    id: 3,
+    tag: "Policy",
+    time: "1 day ago",
+    title: "New U.S. regulations set to change the landscape for rabies prevention and treatment.",
+    image: sampleImage, 
+  },
+  {
+    id: 4,
+    tag: "Research",
+    time: "3 days ago",
+    title:
+      "Breakthrough study reveals the potential of mRNA vaccines for combating emerging diseases.",
+    image: sampleImage, // Add a different image or illustration
+  },
+  {
+    id: 5,
+    tag: "Pandemic",
+    time: "1 week ago",
+    title: "Global COVID-19 response: Lessons learned and future pandemic preparedness.",
+    image: sampleImage, // Use an image representing a health-related theme
+  },
+];
 
-    const sendMessageToChatScreen = async () => {
-      if (message.trim() === "") {
-        return;
-      }
-      setLoading(true);
-      const token = localStorage.getItem("healthUserToken");
-      const userId = localStorage.getItem("healthUserId");
-      if (!token || !userId) {
-        console.error("Missing token or user ID. Redirect to login.");
-        return;
-      }
-      try {
-        const response = await fetch(`${API_BASE_URL}/prompt`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            authId: userId,
-            queryText: message,
-            queryId: "no-queryId",
-          }),
-        });
-        if (!response.ok) {
-          console.error(`API Error: ${response.statusText}`);
-          return;
-        }
-        const data = await response.json();
-        setMessage("");
-        setLoading(false);
-        if (data?.type === "newChat") {
-          add({
-            queryText: data?.data?.query.queryText,
-            response: data?.data?.query.response,
-            id: data?.data?.query?.id,
-            createdAt: data?.data?.query?.createdAt,
-          });
-          navigate("/app/health-bot/" + data?.data?.query?.id);
-        }
-      } catch (error) {
-        console.error("Error sending message:", error);
-        setLoading(false);
-      }
-    };
+
+
 
   const toggleDropdown = (id: number) => {
     setDropdownVisible(dropdownVisible === id ? null : id);
@@ -261,26 +226,7 @@ export default function HealthNews() {
           ))}
         </div>
       </div>
-      {/* Input Section */}
-      <div className="fixed bottom-6 right-0 w-full max-w-[761px] flex items-center p-3 md:bottom-6 md:right-14">
-        <input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Type message"
-          className="flex-grow relative p-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm md:text-base"
-        />
-        <button
-          className="absolute right-6 md:right-4 text-blue-600"
-          onClick={sendMessageToChatScreen}
-        >
-          {loading ? (
-            "...."
-          ) : (
-            <img src={send} alt="Send" className="w-6 h-6" />
-          )}
-        </button>
-      </div>
+     
     </div>
   );
 }

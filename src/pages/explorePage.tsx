@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate } from "react-router-dom";
 import personImage from "../assets/Ellipse 2 (1).svg";
 import chatIcon from "../assets/tdesign_chat-bubble-history-filled.svg";
@@ -243,7 +244,7 @@ export default function ExplorePage() {
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Type message"
+          placeholder="Ask your personalized AI anything"
           className="flex-grow relative p-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm md:text-base"
         />
         <button

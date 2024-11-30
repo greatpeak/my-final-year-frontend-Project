@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import personImage from "../assets/Ellipse 2 (1).svg";
@@ -169,9 +170,7 @@ export default function GetHealthTips() {
           className="w-10 h-10 rounded-full cursor-pointer"
           onClick={toggleDropdown}
         />
-        <p className="ml-3 text-sm text-white font-semibold hidden md:block">
-          johndoe@gmail.com
-        </p>
+        <p className="ml-3 text-sm text-white font-semibold hidden md:block">johndoe@gmail.com</p>
         {showDropdown && (
           <div className="absolute right-12 top-14 mt-2 w-40 bg-white shadow-lg rounded-md text-gray-700">
             <button
@@ -224,12 +223,8 @@ export default function GetHealthTips() {
             alt=""
             className="absolute right-[-30px] md:right-[-50px] top-[-90px] md:top-[-100px] w-[96px] h-[96px]"
           />
-          <p className="text-lg font-normal text-white text-center">
-            Hello, User 👋
-          </p>
-          <p className="text-2xl mt-5 font-semibold text-white text-center">
-            Get health tips
-          </p>
+          <p className="text-lg font-normal text-white text-center">Hello, User 👋</p>
+          <p className="text-2xl mt-5 font-semibold text-white text-center">Get health tips</p>
           <button
             onClick={handleChatClick}
             className="mt-5 mb-5 text-white text-center flex gap-2 items-center justify-center"
@@ -259,10 +254,7 @@ export default function GetHealthTips() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {topics.map((topic, index) => (
-            <div
-              key={index}
-              className="bg-[#72BEEE] text-white p-4 rounded-lg shadow-lg"
-            >
+            <div key={index} className="bg-[#72BEEE] text-white p-4 rounded-lg shadow-lg">
               <img src={topic.img} alt="" className="h-[24px] w-[24px]" />
               <p className="text-lg font-semibold">{topic.name}</p>
               <p className="text-sm">{topic.description}</p>
@@ -276,18 +268,14 @@ export default function GetHealthTips() {
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Type message"
+          placeholder="Ask your personalized AI anything"
           className="flex-grow relative p-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm md:text-base"
         />
         <button
           className="absolute right-6 md:right-4 text-blue-600"
           onClick={sendMessageToChatScreen}
         >
-          {loading ? (
-            "...."
-          ) : (
-            <img src={send} alt="Send" className="w-6 h-6" />
-          )}
+          {loading ? "...." : <img src={send} alt="Send" className="w-6 h-6" />}
         </button>
       </div>
     </div>
