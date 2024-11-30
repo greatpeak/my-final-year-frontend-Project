@@ -115,7 +115,7 @@ export default function GetHealthTips() {
           authId: userId,
           queryText: `User Health Information: ${JSON.stringify(
             healthInfo
-          )}\nUsing the above user health information, respond to the following query: ${message}`,
+          )}\nUsing the above user health information, respond to the following query. Don't return the information. Just let them know it base on their personal information: ${message}`,
           queryId: "no-queryId",
         }),
       });
