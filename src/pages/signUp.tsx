@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, FormEvent } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import Robot from "../assets/Graident_Ai_Robot_1-removebg-preview 1.svg";

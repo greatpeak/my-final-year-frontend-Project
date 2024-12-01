@@ -186,7 +186,7 @@ export default function GetHealthTips() {
         <img
           src={personImage}
           alt="User Avatar"
-          className="w-10 h-10 rounded-full cursor-pointer"
+          className="w-22 h-22 rounded-full cursor-pointer"
           onClick={toggleDropdown}
         />
         <p className="ml-3 text-sm text-white font-semibold hidden md:block">johndoe@gmail.com</p>
@@ -206,7 +206,7 @@ export default function GetHealthTips() {
             </button>
 
             <button
-              onClick={handleViewHealthStatus}
+              onClick={() => setIsModalOpen(true)}
               className="block px-4 py-2 hover:bg-gray-100 w-full text-left text-xs"
             >
               Update Health Status

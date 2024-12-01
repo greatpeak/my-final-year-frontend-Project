@@ -154,7 +154,7 @@ useEffect(() => {
         <img
           src={personImage}
           alt="User Avatar"
-          className="w-10 h-10 rounded-full cursor-pointer"
+          className="w-16 h-16 rounded-full cursor-pointer"
           onClick={toggleDropdown}
         />
         <p className="ml-3 text-sm text-white font-semibold hidden md:block">johndoe@gmail.com</p>

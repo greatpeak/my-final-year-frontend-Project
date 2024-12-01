@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { FormEvent, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Robot from "../assets/Graident_Ai_Robot_1-removebg-preview 1.svg";
-import Logo from "../assets/Frame 2.svg";
+import Logo from "../assets/Ellipse 2 (1).svg";
 import { API_BASE_URL } from "../base_url";
 
 const Login: React.FC = () => {

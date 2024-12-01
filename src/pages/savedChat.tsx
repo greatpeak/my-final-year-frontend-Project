@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Logo from "../assets/Frame 1.svg";
+import Logo from "../assets/Ellipse 2 (1).svg";
 import search from "../assets/search.svg";
 import Delete from "../assets/Trash.svg";
 import person from "../assets/Ellipse 2 (1).svg";
