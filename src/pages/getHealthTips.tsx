@@ -87,6 +87,7 @@ export default function GetHealthTips() {
   };
 
   const sendExploreMessageToChatScreen = async (title: string) => {
+    console.log("object");
     const message = `${title}`;
     setLoading(true);
     const token = localStorage.getItem("healthUserToken");
