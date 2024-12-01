@@ -162,12 +162,7 @@ export default function SavedChat() {
       </div>
 
       {/* Main Content Area */}
-      <div
-        className="w-full"
-        style={{
-          marginLeft: "25%", // Match the width of the sidebar
-        }}
-      >
+      <div className="w-full md:ml-[25%]">
         <Outlet />
       </div>
     </div>
