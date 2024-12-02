@@ -16,6 +16,7 @@ interface Message {
 
 export default function HealthBot() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const { chatId } = useParams<{ chatId: string }>();
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
@@ -23,46 +24,49 @@ export default function HealthBot() {
   const [queryId, setQueryId] = useState<string>("no-queryId");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-useEffect(() => {
-  const fetchPreviousMessages = async () => {
-    if (!chatId) return;
+  useEffect(() => {
+    const fetchPreviousMessages = async () => {
+      if (!chatId) return;
 
-    const token = localStorage.getItem("healthUserToken");
-    if (!token) {
-      console.error("Missing token. Redirect to login.");
-      return;
-    }
-    try {
-      const response = await fetch(`${API_BASE_URL}/histories/${chatId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error(`Failed to fetch chat history: ${response.statusText}`);
+      const token = localStorage.getItem("healthUserToken");
+      if (!token) {
+        console.error("Missing token. Redirect to login.");
+        return;
       }
-
-      const data = await response.json();
-      const previousMessages = data.data.children
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .map((msg: any) => {
-          const messages: Message[] = [];
-          if (msg.createdAt) {
-            messages.push({ sender: "user", text: msg.queryText });
-            messages.push({ sender: "bot", text: msg.response });
+      try {
+        if (chatId !== "new") {
+          const response = await fetch(`${API_BASE_URL}/histories/${chatId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (!response.ok) {
+            throw new Error(`Failed to fetch chat history: ${response.statusText}`);
           }
-          return messages;
-        })
-        .flat();
 
-      setMessages(previousMessages);
-    } catch (error) {
-      console.error("Error fetching previous messages:", error);
-    }
-  };
+          const data = await response.json();
+          const previousMessages = data.data.children
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .map((msg: any) => {
+              const messages: Message[] = [];
+              if (msg.createdAt) {
+                messages.push({ sender: "user", text: msg.queryText });
+                messages.push({ sender: "bot", text: msg.response });
+              }
+              return messages;
+            })
+            .flat();
+          setMessages(previousMessages);
+        } else {
+          setMessages([]);
+        }
+      } catch (error) {
+        console.error("Error fetching previous messages:", error);
+      }
+    };
 
-  fetchPreviousMessages();
-}, [chatId]);
+    fetchPreviousMessages();
+  }, [chatId]);
 
   const handleGoBack = () => {
     navigate(-1);
@@ -95,6 +99,7 @@ useEffect(() => {
       console.error("User ID is missing. Please log in again.");
       return;
     }
+    setLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}/prompt`, {
         method: "POST",
@@ -129,14 +134,13 @@ useEffect(() => {
         ]);
         setQueryId(resMsg.queryId);
       }
+      setLoading(false);
       setMessage("");
       console.log("Response:", data["data"], data["type"]);
     } catch (error) {
       console.error("Error sending message:", error);
-      setMessages((prev) => [
-        ...prev,
-        { sender: "bot", text: "Sorry, something went wrong." },
-      ]);
+      setLoading(true);
+      setMessages((prev) => [...prev, { sender: "bot", text: "Sorry, something went wrong." }]);
     }
   };
 
@@ -218,7 +222,7 @@ useEffect(() => {
           className="flex-grow relative p-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm md:text-base"
         />
         <button className="absolute right-6 md:right-4" onClick={sendMessage}>
-          <img src={send} alt="Send" className="w-6 h-6" />
+          {loading ? "...." : <img src={send} alt="Send" className="w-12 h-12" />}
         </button>
       </div>
     </div>

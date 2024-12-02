@@ -151,6 +151,7 @@ export default function GetHealthTips() {
     if (confirmLogout) {
       localStorage.removeItem("healthUserToken");
       localStorage.removeItem("healthUserId");
+      localStorage.removeItem("userHealthData");
       navigate("/login");
       setShowDropdown(false);
     }
@@ -176,7 +177,7 @@ export default function GetHealthTips() {
   };
 
   const handleChatClick = () => {
-    navigate("/app/health-bot");
+    navigate("/app/health-bot/new");
   };
 
   return (
@@ -222,7 +223,7 @@ export default function GetHealthTips() {
           <img
             src={personImage}
             alt="User Avatar"
-            className="w-10 h-10 rounded-full cursor-pointer"
+            className="w-22 h-22 rounded-full cursor-pointer"
             onClick={toggleDropdown}
           />
           {showDropdown && (
