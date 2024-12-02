@@ -213,7 +213,7 @@ export default function HealthBot() {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="fixed bottom-6 right-0 w-full max-w-[761px] flex items-center p-3 md:bottom-6 md:right-14">
+      <div className="fixed bottom-6 right-0  w-full max-w-[761px] flex items-center justify-center p-3 md:bottom-6">
         <input
           type="text"
           value={message}

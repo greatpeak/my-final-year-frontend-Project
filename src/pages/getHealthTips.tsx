@@ -317,20 +317,22 @@ export default function GetHealthTips() {
         </div>
       </div>
       {/* Input Section */}
-      <div className="fixed bottom-6 right-0 w-full max-w-[761px] flex items-center p-3 md:bottom-6 md:right-14">
-        <input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Ask your personalized AI anything"
-          className="flex-grow relative p-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm md:text-base"
-        />
-        <button
-          className="absolute right-6 md:right-4 text-blue-600"
-          onClick={sendMessageToChatScreen}
-        >
-          {loading ? "...." : <img src={send} alt="Send" className="w-6 h-6" />}
-        </button>
+      <div className="fixed bottom-6 right-0 w-full max-w-[761px] p-3 md:bottom-6 -ml-12">
+        <div className="w-[100%]  relative flex items-center ">
+          <input
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Ask your personalized AI anything"
+            className="flex-grow relative p-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm md:text-base"
+          />
+          <button
+            className="absolute right-6 md:right-4 text-blue-600"
+            onClick={sendMessageToChatScreen}
+          >
+            {loading ? "...." : <img src={send} alt="Send" className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
       {isModalOpen && <HealthDataModal onClose={handleCloseModal} />}
       {showViewer && <HealthStatusViewer onClose={() => setShowViewer(false)} />}

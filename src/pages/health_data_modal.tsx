@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent } from "react";
 
 interface FormData {
   [key: string]: string; // Supports dynamic custom fields
@@ -47,8 +47,7 @@ const HealthDataModal: React.FC<HealthDataModalProps> = ({ onClose }) => {
     }
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = () => {
 
     const allData = {
       ...formData,
@@ -75,6 +74,8 @@ const HealthDataModal: React.FC<HealthDataModalProps> = ({ onClose }) => {
     setCustomFields((prev) => prev.filter((_, i) => i !== index));
   };
 
+
+
   return (
     <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
       <div className="bg-white rounded-lg shadow-lg w-full max-w-lg max-h-screen overflow-hidden">
@@ -85,7 +86,7 @@ const HealthDataModal: React.FC<HealthDataModalProps> = ({ onClose }) => {
 
         {/* Modal Body */}
         <div className="p-4 overflow-y-auto max-h-[calc(100vh-200px)]">
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-4">
             {/* Predefined Fields */}
             {Object.keys(formData).map((field) => (
               <div key={field} className="space-y-1">
@@ -136,7 +137,7 @@ const HealthDataModal: React.FC<HealthDataModalProps> = ({ onClose }) => {
                 Add Field
               </button>
             </div>
-          </form>
+          </div>
         </div>
 
         {customFields.length > 0 && (
@@ -170,7 +171,8 @@ const HealthDataModal: React.FC<HealthDataModalProps> = ({ onClose }) => {
             Cancel
           </button>
           <button
-            type="submit"
+           
+            onClick={handleSubmit}
             className="py-2 px-6 bg-blue-500 text-white rounded-md hover:bg-blue-600"
           >
             Save
