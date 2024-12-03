@@ -20,7 +20,7 @@ const Login: React.FC = () => {
     const password = (document.getElementById("password") as HTMLInputElement).value;
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/login`, { email, password });
+      const response = await axios.post(`${API_BASE_URL}/login`, { email, password, type: "health" });
 
       if (response.status === 200) {
         const { user_credentials } = response.data;
