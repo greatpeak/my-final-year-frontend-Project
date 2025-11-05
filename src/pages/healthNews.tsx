@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import personImage from "../assets/Ellipse 2 (1).svg";
 import chatIcon from "../assets/tdesign_chat-bubble-history-filled.svg";
-import sampleImage from "../assets/Scene of construction site with equipment.svg";
+import Cardiovascular from "../assets/download (3).jfif";
+import Artificial from "../assets/widescreen-inconvo-sweetener.avif";
+import Medicare from "../assets/download (1).jfif";
+import Blood from "../assets/download (2).jfif";
+import ExpertImage from "../assets/download.jfif";
 import time from "../assets/Frame 1000002388.png";
-
-
 
 interface NewsItem {
   id: number;
@@ -13,6 +15,7 @@ interface NewsItem {
   time: string;
   title: string;
   image: string;
+  link: string; 
 }
 
 export default function HealthNews() {
@@ -20,50 +23,50 @@ export default function HealthNews() {
   const [dropdownVisible, setDropdownVisible] = useState<number | null>(null);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
-
-const news: NewsItem[] = [
-  {
-    id: 1,
-    tag: "Global Health",
-    time: "2 hours ago",
-    title:
-      "Unicef initiates health infrastructure projects across West Africa to improve access to healthcare.",
-    image: sampleImage, // Replace with a unique image URL for realism
-  },
-  {
-    id: 2,
-    tag: "Nutrition",
-    time: "5 hours ago",
-    title:
-      "WHO launches campaign targeting malnutrition in Asia, Africa, and the Caribbean with innovative solutions.",
-    image: sampleImage,
-  },
-  {
-    id: 3,
-    tag: "Policy",
-    time: "1 day ago",
-    title: "New U.S. regulations set to change the landscape for rabies prevention and treatment.",
-    image: sampleImage, 
-  },
-  {
-    id: 4,
-    tag: "Research",
-    time: "3 days ago",
-    title:
-      "Breakthrough study reveals the potential of mRNA vaccines for combating emerging diseases.",
-    image: sampleImage, // Add a different image or illustration
-  },
-  {
-    id: 5,
-    tag: "Pandemic",
-    time: "1 week ago",
-    title: "Global COVID-19 response: Lessons learned and future pandemic preparedness.",
-    image: sampleImage, // Use an image representing a health-related theme
-  },
-];
-
-
-
+  const news: NewsItem[] = [
+    {
+      id: 1,
+      tag: "Neuroscience",
+      time: "2 hours ago",
+      title: "Artificial sweeteners and brain aging: What we know so far",
+      image: Artificial,
+      link: "https://www.medicalnewstoday.com/articles/artificial-sweeteners-and-brain-aging-what-we-know-so-far#1",
+    },
+    {
+      id: 2,
+      tag: "Nutrition & Diet",
+      time: "5 hours ago",
+      title: "What to eat and drink before and after a flu shot: Expert Q&A",
+      image: ExpertImage,
+      link: "https://www.medicalnewstoday.com/articles/what-eat-drink-before-after-flu-shot-vaccine-questions",
+    },
+    {
+      id: 3,
+      tag: "Healthcare Policy",
+      time: "1 day ago",
+      title: "Medicare costs: 3 key changes in 2026",
+      image: Medicare,
+      link: "https://www.medicalnewstoday.com/articles/medicare-costs-3-key-changes-in-2026",
+    },
+    {
+      id: 4,
+      tag: "Medical Research",
+      time: "3 days ago",
+      title:
+        "Blood vessels in eyes may help predict heart disease and biological…",
+      image: Blood,
+      link: "https://www.medicalnewstoday.com/articles/blood-vessels-eyes-predict-heart-disease-biological-aging-risk",
+    },
+    {
+      id: 5,
+      tag: "Public Health",
+      time: "1 week ago",
+      title:
+        "Walks longer than 10 minutes at a time may have more cardiovascular…",
+      image: Cardiovascular,
+      link: "https://www.medicalnewstoday.com/articles/walks-longer-10-minutes-cardiovascular-benefits-8000-steps",
+    },
+  ];
 
   const toggleDropdown = (id: number) => {
     setDropdownVisible(dropdownVisible === id ? null : id);
@@ -124,7 +127,6 @@ const news: NewsItem[] = [
       {/* Mobile Only Button */}
       <div className="flex justify-between items-center mb-6 md:hidden">
         <div className="flex items-center relative">
-          {/* User Avatar and Profile Dropdown */}
           <img
             src={personImage}
             alt="User Avatar"
@@ -217,16 +219,31 @@ const news: NewsItem[] = [
               <p className="text-white text-base font-medium mb-2">
                 {item.title}
               </p>
-              <img
-                src={item.image}
-                alt={item.title}
-                className="w-full h-40 object-cover rounded-lg my-4"
-              />
+
+              {/* ✅ Each news item now links to its specific article */}
+              <a
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block"
+              >
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-40 object-cover rounded-lg my-4"
+                />
+              </a>
             </div>
           ))}
         </div>
+        <a
+          href="https://www.medicalnewstoday.com/news"
+          className="text-white mt-3 underline flex justify-center items-center"
+        >
+          {" "}
+          View All
+        </a>
       </div>
-     
     </div>
   );
 }
