@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import personImage from "../assets/Ellipse 2 (1).svg";
+import { useEffect, useState, useRef } from "react";
+import Logo from "../assets/Ellipse 2 (1).svg";
 import chat from "../assets/tdesign_chat-bubble-history-filled.svg";
 import circle from "../assets/Ellipse 2.svg";
-import send from "../assets/Send.svg";
 import messageIcon from "../assets/tabler_message-filled.svg";
 import circle2 from "../assets/Ellipse 11.svg";
 import { API_BASE_URL } from "../base_url";
@@ -12,6 +11,7 @@ import { useChatStore } from "../zustand";
 import { topics } from "../data";
 import HealthDataModal from "./health_data_modal";
 import HealthStatusViewer from "./health_status_viewer";
+import { User, FileText, LogOut, ChevronDown } from "lucide-react";
 
 export default function GetHealthTips() {
   const navigate = useNavigate();
@@ -20,14 +20,42 @@ export default function GetHealthTips() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string>("");
   const add = useChatStore((state: any) => state.add);
-
   const [showViewer, setShowViewer] = useState(false);
-
-  const handleViewHealthStatus = () => setShowViewer(true);
-
+  const dropdownRefMobile = useRef<HTMLDivElement>(null);
+  const dropdownRefDesktop = useRef<HTMLDivElement>(null);
+  const handleViewHealthStatus = () => {
+    setShowViewer(true);
+    setShowDropdown(false);
+  };
   const toggleDropdown = () => {
     setShowDropdown((prev) => !prev);
   };
+    useEffect(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, []);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      const isOutsideMobile =
+        dropdownRefMobile.current &&
+        !dropdownRefMobile.current.contains(target);
+      const isOutsideDesktop =
+        dropdownRefDesktop.current &&
+        !dropdownRefDesktop.current.contains(target);
+
+      if (isOutsideMobile && isOutsideDesktop) {
+        setShowDropdown(false);
+      }
+    };
+
+    if (showDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showDropdown]);
 
   const sendMessageToChatScreen = async () => {
     if (message.trim() === "") {
@@ -42,7 +70,6 @@ export default function GetHealthTips() {
     }
     try {
       const userHealthData = localStorage.getItem("userHealthData");
-      // Show modal if health data is missing
       if (!userHealthData || userHealthData.trim() === "{}") {
         setLoading(false);
         setIsModalOpen(true);
@@ -58,9 +85,8 @@ export default function GetHealthTips() {
         },
         body: JSON.stringify({
           authId: userId,
-          queryText: `User Health Information: ${JSON.stringify(
-            healthInfo
-          )}\nUsing the above user health information, respond to the following query: ${message}`,
+          queryText: message,
+          healthInfo: healthInfo,
           queryId: "no-queryId",
         }),
       });
@@ -87,7 +113,6 @@ export default function GetHealthTips() {
   };
 
   const sendExploreMessageToChatScreen = async (title: string) => {
-    console.log("object");
     const message = `${title}`;
     setLoading(true);
     const token = localStorage.getItem("healthUserToken");
@@ -98,7 +123,6 @@ export default function GetHealthTips() {
     }
     try {
       const userHealthData = localStorage.getItem("userHealthData");
-      // Show modal if health data is missing
       if (!userHealthData || userHealthData.trim() === "{}") {
         setLoading(false);
         setIsModalOpen(true);
@@ -114,9 +138,8 @@ export default function GetHealthTips() {
         },
         body: JSON.stringify({
           authId: userId,
-          queryText: `User Health Information: ${JSON.stringify(
-            healthInfo
-          )}\nUsing the above user health information, respond to the following query. Don't return the information. Just let them know it base on their personal information: ${message}`,
+          queryText: `Provide personalized health tips about: ${message}`,
+          healthInfo: healthInfo,
           queryId: "no-queryId",
         }),
       });
@@ -141,6 +164,7 @@ export default function GetHealthTips() {
       setLoading(false);
     }
   };
+
   const handlePreviousChats = () => {
     navigate("/app/mobileSavedChat");
     setShowDropdown(false);
@@ -156,6 +180,7 @@ export default function GetHealthTips() {
       setShowDropdown(false);
     }
   };
+
 
   useEffect(() => {
     const storedData = localStorage.getItem("userHealthData");
@@ -183,84 +208,195 @@ export default function GetHealthTips() {
   return (
     <div className="h-auto bg-[#C0D6E4] p-6 flex flex-col">
       {/* Desktop only */}
-      <div className="hidden md:flex justify-end">
-        <img
-          src={personImage}
-          alt="User Avatar"
-          className="w-22 h-22 rounded-full cursor-pointer"
+      <div className="hidden md:flex justify-end" ref={dropdownRefDesktop}>
+        <button
           onClick={toggleDropdown}
-        />
-        <p className="ml-3 text-sm text-white font-semibold hidden md:block">johndoe@gmail.com</p>
-        {showDropdown && (
-          <div className="absolute right-12 top-14 mt-2 w-40 bg-white shadow-lg rounded-md text-gray-700">
-            <button
-              onClick={handleLogout}
-              className="block px-4 py-2 hover:bg-gray-100 w-full text-left text-xs"
-            >
-              Log out
-            </button>
-            <button
-              onClick={handleViewHealthStatus}
-              className="block px-4 py-2 hover:bg-gray-100 w-full text-left text-xs"
-            >
-              View Health Status
-            </button>
+          className="flex items-center gap-2 bg-white hover:bg-gray-50 transition-all duration-200 px-4 py-2 rounded-full shadow-md hover:shadow-lg"
+        >
+          <img src={Logo} alt="User Avatar" className="w-8 h-8 rounded-full" />
+          <span className="text-sm font-medium text-gray-700">Profile</span>
+          <ChevronDown
+            className={`w-4 h-4 text-gray-600 transition-transform duration-200 ${
+              showDropdown ? "rotate-180" : ""
+            }`}
+          />
+        </button>
 
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="block px-4 py-2 hover:bg-gray-100 w-full text-left text-xs"
-            >
-              Update Health Status
-            </button>
+        {showDropdown && (
+          <div className="absolute right-6 top-20 w-56 bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-100 z-50 animate-fadeIn">
+            <div className="bg-gradient-to-r from-[#72BEEE] to-[#5AA5D8] p-4">
+              <div className="flex items-center gap-3">
+                <img
+                  src={Logo}
+                  alt="User Avatar"
+                  className="w-12 h-12 rounded-full border-2 border-white"
+                />
+                <div>
+                  <p className="text-white font-semibold text-sm">User</p>
+                  <p className="text-white/80 text-xs">Health Dashboard</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="py-2">
+              <button
+                onClick={handleViewHealthStatus}
+                className="flex items-center gap-3 px-4 py-3 hover:bg-blue-50 w-full text-left transition-colors duration-150 group"
+              >
+                <div className="p-2 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                  <User className="w-4 h-4 text-[#72BEEE]" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-800">
+                    View Health Status
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Check your health data
+                  </p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => {
+                  setIsModalOpen(true);
+                  setShowDropdown(false);
+                }}
+                className="flex items-center gap-3 px-4 py-3 hover:bg-green-50 w-full text-left transition-colors duration-150 group"
+              >
+                <div className="p-2 bg-green-100 rounded-lg group-hover:bg-green-200 transition-colors">
+                  <FileText className="w-4 h-4 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-800">
+                    Update Health Status
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Modify your information
+                  </p>
+                </div>
+              </button>
+
+              <div className="border-t border-gray-100 my-2"></div>
+
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-3 px-4 py-3 hover:bg-red-50 w-full text-left transition-colors duration-150 group"
+              >
+                <div className="p-2 bg-red-100 rounded-lg group-hover:bg-red-200 transition-colors">
+                  <LogOut className="w-4 h-4 text-red-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-800">Log out</p>
+                  <p className="text-xs text-gray-500">
+                    Sign out of your account
+                  </p>
+                </div>
+              </button>
+            </div>
           </div>
         )}
       </div>
 
       {/* Mobile Only Button */}
       <div className="flex justify-between items-center mb-6 md:hidden">
-        <div className="flex items-center relative">
-          {/* User Avatar and Profile Dropdown */}
-          <img
-            src={personImage}
-            alt="User Avatar"
-            className="w-22 h-22 rounded-full cursor-pointer"
+        <div className="flex items-center relative" ref={dropdownRefMobile}>
+          <button
             onClick={toggleDropdown}
-          />
+            className="flex items-center gap-2 bg-white hover:bg-gray-50 transition-all duration-200 px-3 py-2 rounded-full shadow-md"
+          >
+            <img
+              src={Logo}
+              alt="User Avatar"
+              className="w-8 h-8 rounded-full"
+            />
+            <ChevronDown
+              className={`w-4 h-4 text-gray-600 transition-transform duration-200 ${
+                showDropdown ? "rotate-180" : ""
+              }`}
+            />
+          </button>
+
           {showDropdown && (
-            <div className="absolute left-0 top-12 mt-2 w-40 bg-white shadow-lg rounded-md text-gray-700">
-              {/* View Health Status */}
-              <button
-                onClick={handleViewHealthStatus}
-                className="block px-4 py-2 hover:bg-gray-100 w-full text-left text-xs"
-              >
-                View Health Status
-              </button>
+            <div className="absolute left-0 top-14 w-64 bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-100 z-50 animate-fadeIn">
+              <div className="bg-gradient-to-r from-[#72BEEE] to-[#5AA5D8] p-4">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={Logo}
+                    alt="User Avatar"
+                    className="w-12 h-12 rounded-full border-2 border-white"
+                  />
+                  <div>
+                    <p className="text-white font-semibold text-sm">User</p>
+                    <p className="text-white/80 text-xs">Health Dashboard</p>
+                  </div>
+                </div>
+              </div>
 
-              {/* Change Health Status */}
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="block px-4 py-2 hover:bg-gray-100 w-full text-left text-xs"
-              >
-                Update Health Status
-              </button>
+              <div className="py-2">
+                <button
+                  onClick={handleViewHealthStatus}
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-blue-50 w-full text-left transition-colors duration-150 group"
+                >
+                  <div className="p-2 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                    <User className="w-4 h-4 text-[#72BEEE]" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">
+                      View Health Status
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Check your health data
+                    </p>
+                  </div>
+                </button>
 
-              {/* Log Out */}
-              <button
-                onClick={handleLogout}
-                className="block px-4 py-2 hover:bg-gray-100 w-full text-left text-xs"
-              >
-                Log out
-              </button>
+                <button
+                  onClick={() => {
+                    setIsModalOpen(true);
+                    setShowDropdown(false);
+                  }}
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-green-50 w-full text-left transition-colors duration-150 group"
+                >
+                  <div className="p-2 bg-green-100 rounded-lg group-hover:bg-green-200 transition-colors">
+                    <FileText className="w-4 h-4 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">
+                      Update Health Status
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Modify your information
+                    </p>
+                  </div>
+                </button>
+
+                <div className="border-t border-gray-100 my-2"></div>
+
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-red-50 w-full text-left transition-colors duration-150 group"
+                >
+                  <div className="p-2 bg-red-100 rounded-lg group-hover:bg-red-200 transition-colors">
+                    <LogOut className="w-4 h-4 text-red-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">Log out</p>
+                    <p className="text-xs text-gray-500">
+                      Sign out of your account
+                    </p>
+                  </div>
+                </button>
+              </div>
             </div>
           )}
         </div>
 
         <button
           onClick={handlePreviousChats}
-          className="bg-[#72BEEE] flex gap-1 text-white text-sm px-4 py-2 rounded-lg md:hidden"
+          className="bg-[#72BEEE] flex gap-2 items-center text-white text-sm px-4 py-2 rounded-full shadow-md hover:shadow-lg hover:bg-[#5AA5D8] transition-all duration-200"
         >
           <img src={chat} alt="Chat Icon" className="w-5 h-5" />
-          View saved chat
+          <span>Saved chats</span>
         </button>
       </div>
 
@@ -273,11 +409,15 @@ export default function GetHealthTips() {
             alt=""
             className="absolute right-[-30px] md:right-[-50px] top-[-90px] md:top-[-100px] w-[96px] h-[96px]"
           />
-          <p className="text-lg font-normal text-white text-center">Hello, User 👋</p>
-          <p className="text-2xl mt-5 font-semibold text-white text-center">Get health tips</p>
+          <p className="text-lg font-normal text-white text-center">
+            Hello, User 👋
+          </p>
+          <p className="text-2xl mt-5 font-semibold text-white text-center">
+            Get health tips
+          </p>
           <button
             onClick={handleChatClick}
-            className="mt-5 mb-5 text-white text-center flex gap-2 items-center justify-center"
+            className="mt-5 mb-5 text-white text-center flex gap-2 items-center justify-center hover:scale-105 transition-transform duration-200"
           >
             <img src={messageIcon} alt="message icon" className="w-6 h-6" />
             Tap to chat
@@ -286,56 +426,202 @@ export default function GetHealthTips() {
       </div>
 
       {/* Explore & Health News Section */}
-      <div>
-        <div className="flex gap-2 mt-4">
-          <p
-            className="text-white md:text-lg font-bold mb-4 underline border-r-2 pr-3 border-white cursor-pointer"
-            onClick={handleExploreClick}
-          >
-            Explore
-          </p>
-          <p
-            className="text-white md:text-lg font-bold mb-4 cursor-pointer"
-            onClick={handleHealthNewsClick}
-          >
-            Health news
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {topics.map((topic, index) => (
-            <div
-              key={index}
-              className="bg-[#72BEEE] text-white p-4 rounded-lg shadow-lg"
-              onClick={() => sendExploreMessageToChatScreen(topic.name)}
+      <div className="pb-40">
+        {/* Tab Navigation */}
+        <div className=" mt-4 mb-8">
+          <div className="flex gap-1 bg-white/10 backdrop-blur-sm p-1.5 rounded-2xl inline-flex">
+            <button
+              className="px-6 py-2.5 rounded-xl font-bold text-white bg-white/20 border-2 border-white/40 shadow-lg transition-all duration-200"
+              onClick={handleExploreClick}
             >
-              <img src={topic.img} alt="" className="h-[24px] w-[24px]" />
-              <p className="text-lg font-semibold">{topic.name}</p>
-              <p className="text-sm">{topic.description}</p>
+              🔍 Explore
+            </button>
+            <button
+              className="px-6 py-2.5 rounded-xl font-bold text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200"
+              onClick={handleHealthNewsClick}
+            >
+              📰 Health News
+            </button>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {topics.map((topic, index) => {
+            const IconComponent = topic.icon;
+            return (
+              <div
+                key={index}
+                className={`bg-gradient-to-br ${topic.gradient} text-white p-5 rounded-2xl shadow-lg cursor-pointer hover:shadow-2xl hover:scale-105 transition-all duration-300 group relative overflow-hidden`}
+                onClick={() => sendExploreMessageToChatScreen(topic.name)}
+              >
+                {/* Background decoration */}
+                <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-500"></div>
+
+                {/* Icon with background */}
+                <div className="relative mb-3">
+                  <div className="inline-flex p-2.5 bg-white/20 backdrop-blur-sm rounded-xl">
+                    {IconComponent ? (
+                      <IconComponent className="h-6 w-6 text-white" />
+                    ) : (
+                      <img src={topic.img} alt="" className="h-6 w-6" />
+                    )}
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="relative">
+                  <p className="text-lg font-bold mb-1.5 group-hover:translate-x-1 transition-transform duration-200">
+                    {topic.name}
+                  </p>
+                  <p className="text-sm text-white/90 leading-relaxed">
+                    {topic.description}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Enhanced Input Section */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:ml-24 w-full max-w-[761px] px-3 md:px-6 z-20">
+        <div className="relative">
+          {/* Gradient border effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#72BEEE] via-[#5AA5D8] to-[#72BEEE] rounded-3xl blur-sm opacity-60"></div>
+
+          {/* Input container */}
+          <div className="relative bg-white rounded-3xl shadow-2xl border-2 border-white/50 backdrop-blur-sm overflow-hidden">
+            {/* Message counter and character limit */}
+            {message.length > 0 && (
+              <div className="absolute -top-7 right-2 text-xs text-white/80 bg-[#72BEEE]/80 px-3 py-1 rounded-full backdrop-blur-sm">
+                {message.length} characters
+              </div>
+            )}
+
+            <div className="flex items-center gap-2 p-2">
+              {/* Input field */}
+              <input
+                type="text"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !loading && message.trim()) {
+                    e.preventDefault();
+                    sendMessageToChatScreen();
+                  }
+                }}
+                placeholder="Ask your personalized health AI anything..."
+                className="flex-1 px-4 py-3 bg-transparent focus:outline-none text-sm md:text-base text-gray-800 placeholder-gray-400"
+              />
+
+              {/* Send button */}
+              <button
+                onClick={sendMessageToChatScreen}
+                disabled={loading || !message.trim()}
+                className={`p-3 rounded-2xl transition-all duration-300 flex items-center justify-center ${
+                  loading || !message.trim()
+                    ? "bg-gray-200 cursor-not-allowed"
+                    : "bg-gradient-to-r from-[#72BEEE] to-[#5AA5D8] hover:from-[#5AA5D8] hover:to-[#4A9AC8] shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95"
+                }`}
+              >
+                {loading ? (
+                  <div className="flex gap-1">
+                    <div
+                      className="w-2 h-2 bg-white rounded-full animate-bounce"
+                      style={{ animationDelay: "0ms" }}
+                    ></div>
+                    <div
+                      className="w-2 h-2 bg-white rounded-full animate-bounce"
+                      style={{ animationDelay: "150ms" }}
+                    ></div>
+                    <div
+                      className="w-2 h-2 bg-white rounded-full animate-bounce"
+                      style={{ animationDelay: "300ms" }}
+                    ></div>
+                  </div>
+                ) : (
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                    />
+                  </svg>
+                )}
+              </button>
             </div>
-          ))}
+
+            {/* Bottom hint text */}
+            {!message && (
+              <div className="px-4 pb-2 flex items-center gap-2 text-xs text-gray-400">
+                <span className="inline-flex items-center gap-1">
+                  <svg
+                    className="w-3 h-3"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Press Enter to send
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-      {/* Input Section */}
-      <div className="fixed bottom-6 right-0 w-full max-w-[761px] p-3 md:bottom-6 -ml-12">
-        <div className="w-[100%]  relative flex items-center ">
-          <input
-            type="text"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Ask your personalized AI anything"
-            className="flex-grow relative p-3 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm md:text-base"
-          />
-          <button
-            className="absolute right-6 md:right-4 text-blue-600"
-            onClick={sendMessageToChatScreen}
-          >
-            {loading ? "...." : <img src={send} alt="Send" className="w-6 h-6" />}
-          </button>
-        </div>
-      </div>
+
       {isModalOpen && <HealthDataModal onClose={handleCloseModal} />}
-      {showViewer && <HealthStatusViewer onClose={() => setShowViewer(false)} />}
+      {showViewer && (
+        <HealthStatusViewer onClose={() => setShowViewer(false)} />
+      )}
+
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes bounce-slow {
+          0%, 100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
+        }
+        
+        .animate-fadeIn {
+          animation: fadeIn 0.2s ease-out;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+        
+        .animate-bounce-slow {
+          animation: bounce-slow 3s ease-in-out infinite;
+        }
+        
+        .line-clamp-2 {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+      `}</style>
     </div>
   );
 }
