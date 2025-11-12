@@ -53,18 +53,23 @@ export default function HealthBot() {
           }
 
           const data = await response.json();
+
           const previousMessages = data.data.children
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .map((msg: any) => {
-              const messages: Message[] = [];
-              if (msg.createdAt) {
-                messages.push({ sender: "user", text: msg.queryText });
-                messages.push({ sender: "bot", text: msg.response });
-              }
-              return messages;
+              // Create an array for each message pair
+              return [
+                { sender: "user", text: msg.queryText },
+                { sender: "bot", text: msg.response },
+              ];
             })
-            .flat();
+            .flat(); 
+
           setMessages(previousMessages);
+
+          if (data.data.children.length > 0) {
+            setQueryId(chatId);
+          }
         } else {
           setMessages([]);
         }
@@ -76,7 +81,6 @@ export default function HealthBot() {
     fetchPreviousMessages();
   }, [chatId]);
 
-  // Click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -114,78 +118,82 @@ export default function HealthBot() {
     }
   };
 
-  const sendMessage = async () => {
-    const token = localStorage.getItem("healthUserToken");
-    const healthUserId = localStorage.getItem("healthUserId");
-    if (!token) {
-      navigate("/app/health-tips");
-      return;
-    }
-    if (message.trim() === "") return;
+const sendMessage = async () => {
+  const token = localStorage.getItem("healthUserToken");
+  const healthUserId = localStorage.getItem("healthUserId");
+  if (!token) {
+    navigate("/app/health-tips");
+    return;
+  }
+  if (message.trim() === "") return;
 
-    const userId = localStorage.getItem("healthUserId");
-    if (!userId) {
-      console.error("User ID is missing. Please log in again.");
-      return;
-    }
+  const userId = localStorage.getItem("healthUserId");
+  if (!userId) {
+    console.error("User ID is missing. Please log in again.");
+    return;
+  }
 
-    setLoading(true);
+  // Store the message and clear input immediately
+  const currentMessage = message;
+  setMessage("");
 
-    try {
-      const userHealthData = localStorage.getItem("userHealthData");
-      const healthInfo = userHealthData ? JSON.parse(userHealthData) : {};
+  // Add user message to chat immediately
+  setMessages((prev) => [...prev, { sender: "user", text: currentMessage }]);
 
-      const requestBody = {
-        userId,
-        queryText: message,
-        authId: healthUserId,
-        queryId,
-        healthInfo,
-      };
+  setLoading(true);
 
-      const response = await fetch(`${API_BASE_URL}/prompt`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(requestBody),
-      });
+  try {
+    const userHealthData = localStorage.getItem("userHealthData");
+    const healthInfo = userHealthData ? JSON.parse(userHealthData) : {};
 
-      const data = await response.json();
+    const requestBody = {
+      userId,
+      queryText: currentMessage,
+      authId: healthUserId,
+      queryId,
+      healthInfo,
+    };
 
-      const type = data["type"];
+    const response = await fetch(`${API_BASE_URL}/prompt`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(requestBody),
+    });
 
-      if (type === "newChat") {
-        const resMsg = data["data"]["message"];
-        const resMsgQuery = data["data"]["query"];
-        setMessages((prev) => [
-          ...prev,
-          { sender: "user", text: message },
-          { sender: "bot", text: resMsg.response },
-        ]);
-        setQueryId(resMsgQuery.id);
-      } else if (type === "continuation") {
-        const resMsg = data["data"]["message"];
-        setMessages((prev) => [
-          ...prev,
-          { sender: "user", text: message },
-          { sender: "bot", text: resMsg.response },
-        ]);
-        setQueryId(resMsg.queryId);
-      }
+    const data = await response.json();
 
-      setLoading(false);
-      setMessage("");
-    } catch (error) {
-      console.error("Error sending message:", error);
-      setLoading(false);
+    const type = data["type"];
+
+    if (type === "newChat") {
+      const resMsg = data["data"]["message"];
+      const resMsgQuery = data["data"]["query"];
       setMessages((prev) => [
         ...prev,
-        { sender: "bot", text: "Sorry, something went wrong." },
+        { sender: "bot", text: resMsg.response },
       ]);
+      setQueryId(resMsgQuery.id);
+    } else if (type === "continuation") {
+      const resMsg = data["data"]["message"];
+      setMessages((prev) => [
+        ...prev,
+        { sender: "bot", text: resMsg.response },
+      ]);
+      setQueryId(resMsg.queryId);
     }
-  };
+
+    setLoading(false);
+  } catch (error) {
+    console.error("Error sending message:", error);
+    setLoading(false);
+    setMessages((prev) => [
+      ...prev,
+      { sender: "bot", text: "Sorry, something went wrong." },
+    ]);
+  }
+};
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
@@ -225,7 +233,6 @@ export default function HealthBot() {
             />
             <div className="text-left hidden lg:block">
               <p className="text-white text-sm font-semibold">User</p>
-              <p className="text-white/80 text-xs">johndoe@gmail.com</p>
             </div>
             <ChevronDown
               className={`w-4 h-4 text-white transition-transform duration-200 ${

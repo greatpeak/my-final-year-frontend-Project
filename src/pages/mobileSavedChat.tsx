@@ -23,6 +23,7 @@ export default function MobileSavedChat() {
   const [chats, setChats] = useState<Chat[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [hoveredChat, setHoveredChat] = useState<string | null>(null);
+  const [deletingChatId, setDeletingChatId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -73,6 +74,47 @@ export default function MobileSavedChat() {
 
     fetchChats();
   }, []);
+
+  const handleDeleteChat = async (chatId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this conversation? This action cannot be undone."
+    );
+
+    if (!confirmDelete) return;
+
+    const token = localStorage.getItem("healthUserToken");
+    if (!token) {
+      console.error("No token found");
+      return;
+    }
+
+    setDeletingChatId(chatId);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/histories/${chatId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete chat");
+      }
+
+      // Remove the chat from the local state
+      setChats((prevChats) => prevChats.filter((chat) => chat.id !== chatId));
+
+      console.log("Chat deleted successfully");
+    } catch (error) {
+      console.error("Error deleting chat:", error);
+      alert("Failed to delete conversation. Please try again.");
+    } finally {
+      setDeletingChatId(null);
+    }
+  };
 
   const filteredChats = chats.filter((chat) =>
     chat.queryText.toLowerCase().includes(searchTerm.toLowerCase())
@@ -173,7 +215,9 @@ export default function MobileSavedChat() {
           filteredChats.map((chat, index) => (
             <div
               key={chat.id}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 active:scale-98"
+              className={`bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 active:scale-98 ${
+                deletingChatId === chat.id ? "opacity-50" : ""
+              }`}
               onTouchStart={() => setHoveredChat(chat.id)}
               onTouchEnd={() => setHoveredChat(null)}
               onClick={() => handleOpenChat(chat.id)}
@@ -193,11 +237,9 @@ export default function MobileSavedChat() {
                   </span>
                 </div>
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    // Add delete functionality here
-                  }}
-                  className="p-2 hover:bg-white/20 active:bg-white/30 rounded-lg transition-colors ml-2 flex-shrink-0"
+                  onClick={(e) => handleDeleteChat(chat.id, e)}
+                  disabled={deletingChatId === chat.id}
+                  className="p-2 hover:bg-red-500/20 active:bg-red-500/30 rounded-lg transition-colors ml-2 flex-shrink-0 disabled:opacity-50"
                 >
                   <Trash2 className="w-4 h-4 text-white" />
                 </button>

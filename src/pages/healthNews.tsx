@@ -11,12 +11,9 @@ import {
   LogOut,
   MessageSquare,
   Clock,
-  Share2,
-  Trash2,
   ExternalLink,
   Newspaper,
   TrendingUp,
-  MoreVertical,
 } from "lucide-react";
 
 interface NewsItem {
@@ -30,7 +27,6 @@ interface NewsItem {
 
 export default function HealthNews() {
   const navigate = useNavigate();
-  const [dropdownVisible, setDropdownVisible] = useState<number | null>(null);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -129,10 +125,6 @@ export default function HealthNews() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showProfileDropdown]);
-
-  const toggleDropdown = (id: number) => {
-    setDropdownVisible(dropdownVisible === id ? null : id);
-  };
 
   const toggleProfileDropdown = () => {
     setShowProfileDropdown((prev) => !prev);
@@ -301,34 +293,6 @@ export default function HealthNews() {
                     <Clock className="w-4 h-4" />
                     <span>{item.time}</span>
                   </div>
-                </div>
-
-                {/* Dropdown Menu */}
-                <div className="relative">
-                  <button
-                    onClick={() => toggleDropdown(item.id)}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  >
-                    <MoreVertical className="w-5 h-5 text-gray-600" />
-                  </button>
-
-                  {dropdownVisible === item.id && (
-                    <div className="absolute right-0 mt-2 bg-white rounded-2xl shadow-2xl w-40 border border-gray-100 z-10 animate-fadeIn overflow-hidden">
-                      <button className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-blue-50 w-full text-left transition-colors group">
-                        <Share2 className="w-4 h-4 text-blue-600" />
-                        <span className="text-gray-700 group-hover:text-blue-600">
-                          Share
-                        </span>
-                      </button>
-                      <div className="border-t border-gray-100"></div>
-                      <button className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-red-50 w-full text-left transition-colors group">
-                        <Trash2 className="w-4 h-4 text-red-600" />
-                        <span className="text-gray-700 group-hover:text-red-600">
-                          Remove
-                        </span>
-                      </button>
-                    </div>
-                  )}
                 </div>
               </div>
 
