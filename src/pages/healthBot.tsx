@@ -5,14 +5,7 @@ import robotImage from "../assets/Graident_Ai_Robot_1-removebg-preview 1.svg";
 import { API_BASE_URL } from "../base_url";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import {
-  ChevronDown,
-  LogOut,
-  ArrowLeft,
-  Menu,
-  Bot,
-  Sparkles,
-} from "lucide-react";
+import { ArrowLeft, Bot, Sparkles } from "lucide-react";
 
 interface Message {
   sender: "user" | "bot";
@@ -63,7 +56,7 @@ export default function HealthBot() {
                 { sender: "bot", text: msg.response },
               ];
             })
-            .flat(); 
+            .flat();
 
           setMessages(previousMessages);
 
@@ -104,96 +97,88 @@ export default function HealthBot() {
     navigate(-1);
   };
 
-  const toggleDropdown = () => {
-    setShowDropdown((prev) => !prev);
-  };
+  const sendMessage = async () => {
+    const token = localStorage.getItem("healthUserToken");
+    const healthUserId = localStorage.getItem("healthUserId");
+    const firstName = localStorage.getItem("healthUserFirstName");
+    const lastName = localStorage.getItem("healthUserLastName");
 
-  const handleLogout = () => {
-    const confirmLogout = window.confirm("Are you sure you want to log out?");
-    if (confirmLogout) {
-      localStorage.removeItem("healthUserToken");
-      localStorage.removeItem("healthUserId");
-      navigate("/login");
-      setShowDropdown(false);
+    if (!token) {
+      navigate("/app/health-tips");
+      return;
     }
-  };
+    if (message.trim() === "") return;
 
-const sendMessage = async () => {
-  const token = localStorage.getItem("healthUserToken");
-  const healthUserId = localStorage.getItem("healthUserId");
-  if (!token) {
-    navigate("/app/health-tips");
-    return;
-  }
-  if (message.trim() === "") return;
-
-  const userId = localStorage.getItem("healthUserId");
-  if (!userId) {
-    console.error("User ID is missing. Please log in again.");
-    return;
-  }
-
-  // Store the message and clear input immediately
-  const currentMessage = message;
-  setMessage("");
-
-  // Add user message to chat immediately
-  setMessages((prev) => [...prev, { sender: "user", text: currentMessage }]);
-
-  setLoading(true);
-
-  try {
-    const userHealthData = localStorage.getItem("userHealthData");
-    const healthInfo = userHealthData ? JSON.parse(userHealthData) : {};
-
-    const requestBody = {
-      userId,
-      queryText: currentMessage,
-      authId: healthUserId,
-      queryId,
-      healthInfo,
-    };
-
-    const response = await fetch(`${API_BASE_URL}/prompt`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(requestBody),
-    });
-
-    const data = await response.json();
-
-    const type = data["type"];
-
-    if (type === "newChat") {
-      const resMsg = data["data"]["message"];
-      const resMsgQuery = data["data"]["query"];
-      setMessages((prev) => [
-        ...prev,
-        { sender: "bot", text: resMsg.response },
-      ]);
-      setQueryId(resMsgQuery.id);
-    } else if (type === "continuation") {
-      const resMsg = data["data"]["message"];
-      setMessages((prev) => [
-        ...prev,
-        { sender: "bot", text: resMsg.response },
-      ]);
-      setQueryId(resMsg.queryId);
+    const userId = localStorage.getItem("healthUserId");
+    if (!userId) {
+      console.error("User ID is missing. Please log in again.");
+      return;
     }
 
-    setLoading(false);
-  } catch (error) {
-    console.error("Error sending message:", error);
-    setLoading(false);
-    setMessages((prev) => [
-      ...prev,
-      { sender: "bot", text: "Sorry, something went wrong." },
-    ]);
-  }
-};
+    // Store the message and clear input immediately
+    const currentMessage = message;
+    setMessage("");
+
+    // Add user message to chat immediately
+    setMessages((prev) => [...prev, { sender: "user", text: currentMessage }]);
+
+    setLoading(true);
+
+    try {
+      const userHealthData = localStorage.getItem("userHealthData");
+      const healthInfo = userHealthData ? JSON.parse(userHealthData) : {};
+      healthInfo.firstName = firstName || "there";
+      healthInfo.lastName = lastName || "";
+      healthInfo.fullName = `${firstName || ""} ${lastName || ""}`.trim();
+
+      const requestBody = {
+        userId,
+        queryText: currentMessage,
+        authId: healthUserId,
+        queryId,
+        healthInfo, 
+      };
+
+      const response = await fetch(`${API_BASE_URL}/prompt`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      const data = await response.json();
+
+      const type = data["type"];
+
+      if (type === "newChat") {
+        const resMsg = data["data"]["message"];
+        const resMsgQuery = data["data"]["query"];
+        setMessages((prev) => [
+          ...prev,
+          { sender: "bot", text: resMsg.response },
+        ]);
+        setQueryId(resMsgQuery.id);
+      } else if (type === "continuation") {
+        const resMsg = data["data"]["message"];
+        setMessages((prev) => [
+          ...prev,
+          { sender: "bot", text: resMsg.response },
+        ]);
+        setQueryId(resMsg.queryId);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      setLoading(false);
+      setMessages((prev) => [
+        ...prev,
+        { sender: "bot", text: "Sorry, something went wrong." },
+      ]);
+    }
+  };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
@@ -206,7 +191,7 @@ const sendMessage = async () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#C0D6E4] to-[#A8C8DC]">
       {/* Desktop Header */}
-      <div className="hidden md:flex justify-between items-center p-4 bg-gradient-to-r from-[#72BEEE] to-[#5AA5D8] shadow-lg">
+      <div className="hidden md:flex justify-start items-center p-4 bg-gradient-to-r from-[#72BEEE] to-[#5AA5D8] shadow-lg">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
             <Bot className="w-6 h-6 text-white" />
@@ -220,47 +205,10 @@ const sendMessage = async () => {
             </p>
           </div>
         </div>
-
-        <div className="relative" ref={dropdownRef}>
-          <button
-            onClick={toggleDropdown}
-            className="flex items-center gap-3 bg-white/20 hover:bg-white/30 transition-all duration-200 px-4 py-2 rounded-full shadow-md backdrop-blur-sm"
-          >
-            <img
-              src={personImage}
-              alt="User Avatar"
-              className="w-10 h-10 rounded-full ring-2 ring-white/50"
-            />
-            <div className="text-left hidden lg:block">
-              <p className="text-white text-sm font-semibold">User</p>
-            </div>
-            <ChevronDown
-              className={`w-4 h-4 text-white transition-transform duration-200 ${
-                showDropdown ? "rotate-180" : ""
-              }`}
-            />
-          </button>
-
-          {showDropdown && (
-            <div className="absolute right-0 top-14 w-48 bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-100 z-50 animate-fadeIn">
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-3 px-4 py-3 hover:bg-red-50 w-full text-left transition-colors duration-150 group"
-              >
-                <div className="p-2 bg-red-100 rounded-lg group-hover:bg-red-200 transition-colors">
-                  <LogOut className="w-4 h-4 text-red-600" />
-                </div>
-                <span className="text-sm font-medium text-gray-800">
-                  Log out
-                </span>
-              </button>
-            </div>
-          )}
-        </div>
       </div>
 
       {/* Mobile Header */}
-      <div className="md:hidden bg-gradient-to-r from-[#72BEEE] to-[#5AA5D8] shadow-lg">
+      <div className="md:hidden fixed w-full z-10 bg-gradient-to-r from-[#72BEEE] to-[#5AA5D8] shadow-lg">
         <div className="flex justify-between items-center px-4 py-3">
           <button
             onClick={handleGoBack}
@@ -272,30 +220,13 @@ const sendMessage = async () => {
             <Bot className="w-6 h-6 text-white" />
             <h3 className="font-semibold text-white">Health AI</h3>
           </div>
-          <button
-            onClick={toggleDropdown}
-            className="p-2 hover:bg-white/20 rounded-full transition-all duration-200"
-          >
-            <Menu className="w-5 h-5 text-white" />
-          </button>
+          <div></div>
         </div>
-
-        {showDropdown && (
-          <div className="bg-white/10 backdrop-blur-md border-t border-white/20 px-4 py-3 animate-slideDown">
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 w-full px-4 py-2 bg-white/90 hover:bg-white rounded-xl transition-all duration-200"
-            >
-              <LogOut className="w-4 h-4 text-red-600" />
-              <span className="text-sm font-medium text-gray-800">Log out</span>
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Messages Area */}
       <div
-        className="flex-grow p-4 space-y-6 overflow-y-auto pb-32 custom-scrollbar"
+        className="flex-grow p-4 space-y-6 mt-14 md:mt-0 overflow-y-auto pb-32 custom-scrollbar"
         style={{ scrollbarWidth: "none" }}
       >
         {messages.length === 0 ? (

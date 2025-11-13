@@ -33,8 +33,13 @@ const Login: React.FC = () => {
       if (response.status === 200) {
         const { user_credentials } = response.data;
         console.log(user_credentials);
+
+        // Store all user credentials including firstName and lastName
         localStorage.setItem("healthUserToken", user_credentials.token);
         localStorage.setItem("healthUserId", user_credentials.userId);
+        localStorage.setItem("healthUserFirstName", user_credentials.firstName);
+        localStorage.setItem("healthUserLastName", user_credentials.lastName);
+
         navigate("/app/health-tips");
       }
     } catch (err: any) {

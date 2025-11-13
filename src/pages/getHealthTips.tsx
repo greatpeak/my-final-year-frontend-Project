@@ -3,9 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import Logo from "../assets/Ellipse 2 (1).svg";
 import chat from "../assets/tdesign_chat-bubble-history-filled.svg";
-import circle from "../assets/Ellipse 2.svg";
-import messageIcon from "../assets/tabler_message-filled.svg";
-import circle2 from "../assets/Ellipse 11.svg";
 import { API_BASE_URL } from "../base_url";
 import { useChatStore } from "../zustand";
 import { topics } from "../data";
@@ -23,16 +20,32 @@ export default function GetHealthTips() {
   const [showViewer, setShowViewer] = useState(false);
   const dropdownRefMobile = useRef<HTMLDivElement>(null);
   const dropdownRefDesktop = useRef<HTMLDivElement>(null);
+  const [userName, setUserName] = useState<string>("Dear");
+
+  useEffect(() => {
+    const firstName = localStorage.getItem("healthUserFirstName");
+    const lastName = localStorage.getItem("healthUserLastName");
+
+    if (firstName && lastName) {
+      setUserName(`${firstName} ${lastName}`);
+    } else if (firstName) {
+      setUserName(firstName);
+    }
+  }, []);
+
   const handleViewHealthStatus = () => {
     setShowViewer(true);
     setShowDropdown(false);
   };
+
   const toggleDropdown = () => {
     setShowDropdown((prev) => !prev);
   };
-    useEffect(() => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }, []);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
@@ -64,6 +77,9 @@ export default function GetHealthTips() {
     setLoading(true);
     const token = localStorage.getItem("healthUserToken");
     const userId = localStorage.getItem("healthUserId");
+    const firstName = localStorage.getItem("healthUserFirstName");
+    const lastName = localStorage.getItem("healthUserLastName");
+
     if (!token || !userId) {
       console.error("Missing token or user ID. Redirect to login.");
       return;
@@ -77,6 +93,13 @@ export default function GetHealthTips() {
       }
 
       const healthInfo = userHealthData ? JSON.parse(userHealthData) : {};
+
+      healthInfo.firstName = firstName || "there";
+      healthInfo.lastName = lastName || "";
+      healthInfo.fullName = `${firstName || ""} ${lastName || ""}`.trim();
+
+      console.log("📤 Sending healthInfo with name:", healthInfo);
+
       const response = await fetch(`${API_BASE_URL}/prompt`, {
         method: "POST",
         headers: {
@@ -86,7 +109,7 @@ export default function GetHealthTips() {
         body: JSON.stringify({
           authId: userId,
           queryText: message,
-          healthInfo: healthInfo,
+          healthInfo: healthInfo, 
           queryId: "no-queryId",
         }),
       });
@@ -117,6 +140,9 @@ export default function GetHealthTips() {
     setLoading(true);
     const token = localStorage.getItem("healthUserToken");
     const userId = localStorage.getItem("healthUserId");
+    const firstName = localStorage.getItem("healthUserFirstName");
+    const lastName = localStorage.getItem("healthUserLastName");
+
     if (!token || !userId) {
       console.error("Missing token or user ID. Redirect to login.");
       return;
@@ -130,6 +156,13 @@ export default function GetHealthTips() {
       }
 
       const healthInfo = userHealthData ? JSON.parse(userHealthData) : {};
+
+      healthInfo.firstName = firstName || "there";
+      healthInfo.lastName = lastName || "";
+      healthInfo.fullName = `${firstName || ""} ${lastName || ""}`.trim();
+
+      console.log("📤 Sending explore healthInfo with name:", healthInfo);
+
       const response = await fetch(`${API_BASE_URL}/prompt`, {
         method: "POST",
         headers: {
@@ -139,7 +172,7 @@ export default function GetHealthTips() {
         body: JSON.stringify({
           authId: userId,
           queryText: `Provide personalized health tips about: ${message}`,
-          healthInfo: healthInfo,
+          healthInfo: healthInfo, 
           queryId: "no-queryId",
         }),
       });
@@ -176,11 +209,12 @@ export default function GetHealthTips() {
       localStorage.removeItem("healthUserToken");
       localStorage.removeItem("healthUserId");
       localStorage.removeItem("userHealthData");
+      localStorage.removeItem("healthUserFirstName");
+      localStorage.removeItem("healthUserLastName");
       navigate("/login");
       setShowDropdown(false);
     }
   };
-
 
   useEffect(() => {
     const storedData = localStorage.getItem("userHealthData");
@@ -199,10 +233,6 @@ export default function GetHealthTips() {
 
   const handleHealthNewsClick = () => {
     navigate("/app/health-news");
-  };
-
-  const handleChatClick = () => {
-    navigate("/app/health-bot/new");
   };
 
   return (
@@ -232,7 +262,7 @@ export default function GetHealthTips() {
                   className="w-12 h-12 rounded-full border-2 border-white"
                 />
                 <div>
-                  <p className="text-white font-semibold text-sm">User</p>
+                  <p className="text-white font-semibold text-sm">{userName}</p>
                   <p className="text-white/80 text-xs">Health Dashboard</p>
                 </div>
               </div>
@@ -296,7 +326,6 @@ export default function GetHealthTips() {
           </div>
         )}
       </div>
-
       {/* Mobile Only Button */}
       <div className="flex justify-between items-center mb-6 md:hidden">
         <div className="flex items-center relative" ref={dropdownRefMobile}>
@@ -326,7 +355,9 @@ export default function GetHealthTips() {
                     className="w-12 h-12 rounded-full border-2 border-white"
                   />
                   <div>
-                    <p className="text-white font-semibold text-sm">User</p>
+                    <p className="text-white font-semibold text-sm">
+                      {userName}
+                    </p>
                     <p className="text-white/80 text-xs">Health Dashboard</p>
                   </div>
                 </div>
@@ -399,29 +430,36 @@ export default function GetHealthTips() {
           <span>Saved chats</span>
         </button>
       </div>
+      {/* Greeting Section - Compact Design */}
+      <div className="flex justify-center items-center flex-col my-4">
+        <div className="relative w-full max-w-md mx-auto">
+          {/* Subtle Background Glow */}
+          <div className="absolute inset-0 bg-white/30 rounded-3xl blur-2xl"></div>
 
-      {/* Greeting Section */}
-      <div className="flex justify-center items-center flex-col flex-grow mt-7">
-        <img src={circle} alt="" className="relative h-[256px] w-[256px]" />
-        <div className="absolute">
-          <img
-            src={circle2}
-            alt=""
-            className="absolute right-[-30px] md:right-[-50px] top-[-90px] md:top-[-100px] w-[96px] h-[96px]"
-          />
-          <p className="text-lg font-normal text-white text-center">
-            Hello, User 👋
-          </p>
-          <p className="text-2xl mt-5 font-semibold text-white text-center">
-            Get health tips
-          </p>
-          <button
-            onClick={handleChatClick}
-            className="mt-5 mb-5 text-white text-center flex gap-2 items-center justify-center hover:scale-105 transition-transform duration-200"
-          >
-            <img src={messageIcon} alt="message icon" className="w-6 h-6" />
-            Tap to chat
-          </button>
+          {/* Compact Card */}
+          <div className="relative bg-white/90 backdrop-blur-lg rounded-3xl shadow-xl p-6 md:p-8 border border-white/50">
+            {/* Small Avatar */}
+            <div className="flex justify-center mb-4">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-[#72BEEE] to-[#5AA5D8] rounded-full blur-md opacity-30"></div>
+                <img
+                  src={Logo}
+                  alt="User Avatar"
+                  className="relative w-16 h-16 md:w-20 md:h-20 rounded-full border-3 border-white shadow-lg"
+                />
+              </div>
+            </div>
+            {/* Greeting Text - Compact */}
+            <div className="text-center space-y-2 mb-5">
+              <p className="text-sm text-gray-500">Welcome back 👋</p>
+              <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#72BEEE] to-[#5AA5D8] bg-clip-text text-transparent">
+                Hello, {userName}!
+              </h2>
+              <p className="text-sm text-gray-600">
+                Ready for your health tips?
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -481,7 +519,6 @@ export default function GetHealthTips() {
           })}
         </div>
       </div>
-
       {/* Enhanced Input Section */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:ml-24 w-full max-w-[761px] px-3 md:px-6 z-20">
         <div className="relative">
@@ -578,12 +615,10 @@ export default function GetHealthTips() {
           </div>
         </div>
       </div>
-
       {isModalOpen && <HealthDataModal onClose={handleCloseModal} />}
       {showViewer && (
         <HealthStatusViewer onClose={() => setShowViewer(false)} />
       )}
-
       <style>{`
         @keyframes fadeIn {
           from {
