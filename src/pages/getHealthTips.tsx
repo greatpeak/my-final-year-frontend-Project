@@ -109,7 +109,7 @@ export default function GetHealthTips() {
         body: JSON.stringify({
           authId: userId,
           queryText: message,
-          healthInfo: healthInfo, 
+          healthInfo: healthInfo,
           queryId: "no-queryId",
         }),
       });
@@ -172,7 +172,7 @@ export default function GetHealthTips() {
         body: JSON.stringify({
           authId: userId,
           queryText: `Provide personalized health tips about: ${message}`,
-          healthInfo: healthInfo, 
+          healthInfo: healthInfo,
           queryId: "no-queryId",
         }),
       });
