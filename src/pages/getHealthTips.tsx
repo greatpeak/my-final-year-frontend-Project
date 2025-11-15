@@ -94,7 +94,7 @@ export default function GetHealthTips() {
 
       const healthInfo = userHealthData ? JSON.parse(userHealthData) : {};
 
-      healthInfo.firstName = firstName || "there";
+      healthInfo.firstName = firstName || "Dear";
       healthInfo.lastName = lastName || "";
       healthInfo.fullName = `${firstName || ""} ${lastName || ""}`.trim();
 

@@ -97,14 +97,26 @@ const VerifyEmail: React.FC = () => {
 
       if (response.status === 200) {
         const { user_credentials } = response.data;
-        console.log(user_credentials);
+        console.log("✅ Verification successful:", user_credentials);
+
+        // ✅ CRITICAL FIX: Store ALL user data including firstName and lastName
         localStorage.setItem("healthUserToken", user_credentials.token);
         localStorage.setItem("healthUserId", user_credentials.userId);
+        localStorage.setItem("healthUserFirstName", user_credentials.firstName);
+        localStorage.setItem("healthUserLastName", user_credentials.lastName);
+        localStorage.setItem("healthUserEmail", user_credentials.email);
+        localStorage.setItem("healthUserAvatar", user_credentials.avatar);
+
+        console.log("✅ Stored user data:", {
+          firstName: user_credentials.firstName,
+          lastName: user_credentials.lastName,
+          userId: user_credentials.userId,
+        });
 
         setSuccess(true);
         setTimeout(() => {
           window.location.href = "/app/health-tips";
-        }, 1000);
+        }, 1500);
       }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -204,7 +216,7 @@ const VerifyEmail: React.FC = () => {
             <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg animate-slideIn">
               <p className="text-sm text-green-700 flex items-center gap-2">
                 <Check className="w-5 h-5 text-green-500" />
-                Email verified successfully! Redirecting...
+                Email verified successfully! Redirecting to your dashboard...
               </p>
             </div>
           )}

@@ -44,9 +44,30 @@ const Login: React.FC = () => {
       }
     } catch (err: any) {
       console.error("Login error:", err);
-      setError(
-        err.response?.data?.message || "Something went wrong. Please try again."
-      );
+      const errorMessage =
+        err.response?.data?.message ||
+        "Something went wrong. Please try again.";
+
+      // ✅ CHECK IF ERROR IS EMAIL VERIFICATION RELATED
+      if (
+        errorMessage.toLowerCase().includes("verify your email") ||
+        errorMessage.toLowerCase().includes("email verification") ||
+        errorMessage.toLowerCase().includes("verify email")
+      ) {
+        // Store email temporarily for verification page
+        localStorage.setItem("pendingVerificationEmail", email);
+
+        // Show error briefly before redirecting
+        setError("⚠️ Please verify your email. Redirecting...");
+
+        // Redirect to verify email page after 2 seconds
+        setTimeout(() => {
+          navigate(`/verify-email/${email}`);
+        }, 2000);
+      } else {
+        // Show other errors normally
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -110,9 +131,29 @@ const Login: React.FC = () => {
 
           {/* Error Message */}
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg animate-slideIn">
-              <p className="text-sm text-red-700 flex items-center gap-2">
-                <span className="text-red-500 text-lg">⚠</span>
+            <div
+              className={`mb-6 p-4 border-l-4 rounded-lg animate-slideIn ${
+                error.includes("Redirecting")
+                  ? "bg-blue-50 border-blue-500"
+                  : "bg-red-50 border-red-500"
+              }`}
+            >
+              <p
+                className={`text-sm flex items-center gap-2 ${
+                  error.includes("Redirecting")
+                    ? "text-blue-700"
+                    : "text-red-700"
+                }`}
+              >
+                <span
+                  className={`text-lg ${
+                    error.includes("Redirecting")
+                      ? "text-blue-500"
+                      : "text-red-500"
+                  }`}
+                >
+                  {error.includes("Redirecting") ? "📧" : "⚠"}
+                </span>
                 {error}
               </p>
             </div>

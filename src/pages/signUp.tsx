@@ -81,11 +81,29 @@ const Signup: React.FC = () => {
           password: formData.password,
         }),
       });
+
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
         setLoading(false);
-        throw new Error(errorData.message || "Signup failed");
+        throw new Error(data.message || "Signup failed");
       }
+
+      // ✅ CRITICAL FIX: Store user data in localStorage immediately after signup
+      if (data.user_data) {
+        localStorage.setItem("healthUserId", data.user_data.userId);
+        localStorage.setItem("healthUserFirstName", data.user_data.firstName);
+        localStorage.setItem("healthUserLastName", data.user_data.lastName);
+        localStorage.setItem("healthUserEmail", data.user_data.email);
+        localStorage.setItem("healthUserAvatar", data.user_data.avatar);
+
+        console.log("✅ User data stored:", {
+          firstName: data.user_data.firstName,
+          lastName: data.user_data.lastName,
+          userId: data.user_data.userId,
+        });
+      }
+
       setLoading(false);
       navigate("/verify-email/" + formData.email);
     } catch (error: any) {
